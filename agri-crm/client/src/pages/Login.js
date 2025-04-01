@@ -6,7 +6,7 @@ import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const auth = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,7 +20,7 @@ const Login = () => {
     try {
       setError('');
       setLoading(true);
-      await login(credentials);
+      await auth.signIn(credentials);
       navigate('/');
     } catch (err) {
       setError('Failed to log in: ' + err.message);
