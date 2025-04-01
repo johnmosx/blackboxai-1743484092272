@@ -9,6 +9,8 @@ import Login from './pages/Login';
 import Crops from './pages/Crops';
 import Reports from './pages/Reports';
 import Users from './pages/Users';
+import RoleBasedRoute from './components/RoleBasedRoute';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -21,7 +23,14 @@ function App() {
       <Route path="/farmers/view/:id" element={<Layout><FarmerView /></Layout>} />
       <Route path="/crops" element={<Layout><Crops /></Layout>} />
       <Route path="/reports" element={<Layout><Reports /></Layout>} />
-      <Route path="/users" element={<Layout><Users /></Layout>} />
+      <Route path="/users" element={
+        <Layout>
+          <RoleBasedRoute allowedRoles={['Administrator']}>
+            <Users />
+          </RoleBasedRoute>
+        </Layout>
+      } />
+          <Route path="/profile" element={<Layout><Profile /></Layout>} />
     </Routes>
   );
 }
