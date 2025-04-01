@@ -11,26 +11,29 @@ import Reports from './pages/Reports';
 import Users from './pages/Users';
 import RoleBasedRoute from './components/RoleBasedRoute';
 import Profile from './pages/Profile';
+import AuthenticatedRoute from './components/AuthenticatedRoute';
 
 function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Layout><Dashboard /></Layout>} />
-      <Route path="/farmers" element={<Layout><Farmers /></Layout>} />
-      <Route path="/farmers/new" element={<Layout><FarmerForm /></Layout>} />
-      <Route path="/farmers/:id" element={<Layout><FarmerForm /></Layout>} />
-      <Route path="/farmers/view/:id" element={<Layout><FarmerView /></Layout>} />
-      <Route path="/crops" element={<Layout><Crops /></Layout>} />
-      <Route path="/reports" element={<Layout><Reports /></Layout>} />
-      <Route path="/users" element={
-        <Layout>
-          <RoleBasedRoute allowedRoles={['Administrator']}>
-            <Users />
-          </RoleBasedRoute>
-        </Layout>
-      } />
-          <Route path="/profile" element={<Layout><Profile /></Layout>} />
+      <Route element={<AuthenticatedRoute />}>
+        <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/farmers" element={<Layout><Farmers /></Layout>} />
+        <Route path="/farmers/new" element={<Layout><FarmerForm /></Layout>} />
+        <Route path="/farmers/:id" element={<Layout><FarmerForm /></Layout>} />
+        <Route path="/farmers/view/:id" element={<Layout><FarmerView /></Layout>} />
+        <Route path="/crops" element={<Layout><Crops /></Layout>} />
+        <Route path="/reports" element={<Layout><Reports /></Layout>} />
+        <Route path="/users" element={
+          <Layout>
+            <RoleBasedRoute allowedRoles={['Administrator']}>
+              <Users />
+            </RoleBasedRoute>
+          </Layout>
+        } />
+        <Route path="/profile" element={<Layout><Profile /></Layout>} />
+      </Route>
     </Routes>
   );
 }
