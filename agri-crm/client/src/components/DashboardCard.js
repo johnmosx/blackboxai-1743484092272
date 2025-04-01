@@ -1,14 +1,19 @@
-const DashboardCard = ({ title, value, icon, color }) => {
+import React from 'react';
+import { Card } from 'react-bootstrap';
+
+const DashboardCard = ({ title, value, icon: Icon, variant }) => {
   return (
-    <div className={`${color} p-6 rounded-lg shadow-sm`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-gray-600">{title}</p>
-          <h3 className="text-3xl font-bold mt-2">{value}</h3>
+    <Card className="mb-4" border={variant} style={{ minHeight: '120px' }}>
+      <Card.Body className="d-flex flex-column">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Card.Title className="mb-0 text-muted">{title}</Card.Title>
+          <Icon size={24} className={`text-${variant}`} />
         </div>
-        <span className="text-4xl">{icon}</span>
-      </div>
-    </div>
+        <Card.Text as="div" className="mt-auto">
+          <h2 className="mb-0">{value}</h2>
+        </Card.Text>
+      </Card.Body>
+    </Card>
   );
 };
 
