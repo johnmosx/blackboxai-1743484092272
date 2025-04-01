@@ -4,6 +4,7 @@ const db = require('./models');
 const farmerRoutes = require('./routes/farmers');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
+const fieldRoutes = require('./routes/fieldRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/farmers', farmerRoutes);
 app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/fields', fieldRoutes);
 
 // Database connection
 db.sequelize.sync()
