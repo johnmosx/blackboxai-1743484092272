@@ -6,11 +6,14 @@ import {
   FaUsers,
   FaSeedling,
   FaChartBar,
-  FaCog
+  FaCog,
+  FaUserShield
 } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   return (
     <Nav className="flex-column p-3" style={{ minHeight: '100vh' }}>
@@ -42,6 +45,17 @@ const Sidebar = () => {
         <FaChartBar className="me-2" />
         Reports
       </Nav.Link>
+      
+      {currentUser?.role === 'Administrator' && (
+        <Nav.Link 
+          className="mb-2"
+          onClick={() => navigate('/users')}
+        >
+          <FaUserShield className="me-2" />
+          User Management
+        </Nav.Link>
+      )}
+
       <div className="mt-auto">
         <Nav.Link onClick={() => navigate('/settings')}>
           <FaCog className="me-2" />
