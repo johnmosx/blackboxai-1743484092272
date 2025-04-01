@@ -1,5 +1,6 @@
 const API_BASE = 'http://localhost:5000/api';
 
+// Auth
 export const login = async (credentials) => {
   const response = await fetch(`${API_BASE}/login`, {
     method: 'POST',
@@ -11,6 +12,24 @@ export const login = async (credentials) => {
   return await response.json();
 };
 
+// User Management
+export const getUsers = async () => {
+  const response = await fetch(`${API_BASE}/users`);
+  return await response.json();
+};
+
+export const updateUser = async (id, userData) => {
+  const response = await fetch(`${API_BASE}/users/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+  });
+  return await response.json();
+};
+
+// Farmer Management
 export const getFarmers = async () => {
   const response = await fetch(`${API_BASE}/farmers`);
   return await response.json();
