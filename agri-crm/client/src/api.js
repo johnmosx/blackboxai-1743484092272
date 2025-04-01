@@ -1,6 +1,7 @@
 const API_BASE = 'http://localhost:5000/api';
 
 // Auth
+// Authentication endpoints
 export const login = async (credentials) => {
   const response = await fetch(`${API_BASE}/login`, {
     method: 'POST',
@@ -12,7 +13,40 @@ export const login = async (credentials) => {
   return await response.json();
 };
 
+export const changePassword = async (currentPassword, newPassword) => {
+  const response = await fetch(`${API_BASE}/change-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({ currentPassword, newPassword })
+  });
+  return await response.json();
+};
+
+export const getCurrentUser = async () => {
+  const response = await fetch(`${API_BASE}/me`, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+  return await response.json();
+};
+
 // User Management
+export const createUser = async (userData) => {
+  const response = await fetch(`${API_BASE}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(userData)
+  });
+  return await response.json();
+};
+
 export const getUsers = async () => {
   const response = await fetch(`${API_BASE}/users`);
   return await response.json();
