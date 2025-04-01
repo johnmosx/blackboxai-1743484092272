@@ -1,49 +1,77 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { login, changePassword } from '../api';
+import api from '../api';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
+
+  const verifyToken = async () => {
+    try {
+      await api.get('/verify');
+      setTokenValid(true);
+      return true;
+    } catch (error) {
+      setTokenValid(false);
+      if (error.response?.status === 401) {
+        signOut();
+      }
+      return false;
+    }
+  };
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    if (user) setCurrentUser(user);
-    setLoading(false);
+    if (user) {
+      setCurrentUser(user);
+      verifyToken().finally(() => setLoading(false));
+      
+      // Verify token every 5 minutes
+      const interval = setInterval(verifyToken, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const signIn = async (credentials) => {
-    const response = await login(credentials);
-    if (response.token) {
-      localStorage.setItem('token', response.token);
+    const response = await api.post('/login', credentials);
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
       const user = {
-        username: credentials.username,
-        token: response.token
+        ...response.data.user,
+        token: response.data.token
       };
       localStorage.setItem('user', JSON.stringify(user));
       setCurrentUser(user);
+      setTokenValid(true);
       return user;
     }
-    throw new Error(response.message || 'Login failed');
+    throw new Error(response.data.message || 'Login failed');
   };
 
   const signOut = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     setCurrentUser(null);
+    setTokenValid(false);
   };
 
   const updatePassword = async (currentPassword, newPassword) => {
-    await changePassword(currentPassword, newPassword);
+    await api.post('/change-password', { currentPassword, newPassword });
   };
 
   return (
     <AuthContext.Provider value={{
       currentUser,
+      tokenValid,
+      loading,
       signIn,
       signOut,
       updatePassword,
-      loading
+      verifyToken
     }}>
       {children}
     </AuthContext.Provider>
