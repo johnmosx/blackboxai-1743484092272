@@ -14,10 +14,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = async (credentials) => {
-    const user = await login(credentials);
-    localStorage.setItem('user', JSON.stringify(user));
-    setCurrentUser(user);
-    return user;
+    const response = await login(credentials);
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      const user = {
+        username: credentials.username,
+        token: response.token
+      };
+      localStorage.setItem('user', JSON.stringify(user));
+      setCurrentUser(user);
+      return user;
+    }
+    throw new Error(response.message || 'Login failed');
   };
 
   const signOut = () => {
