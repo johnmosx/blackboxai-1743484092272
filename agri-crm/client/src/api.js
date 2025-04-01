@@ -1,37 +1,51 @@
-import axios from 'axios';
+const API_BASE = 'http://localhost:5000/api';
 
-const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Should match backend port
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export const login = async (credentials) => {
+  const response = await fetch(`${API_BASE}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  });
+  return await response.json();
+};
 
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+export const getFarmers = async () => {
+  const response = await fetch(`${API_BASE}/farmers`);
+  return await response.json();
+};
 
-// Response interceptor to handle errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Handle unauthorized access
-      localStorage.removeItem('token');
-      window.location = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+export const getFarmer = async (id) => {
+  const response = await fetch(`${API_BASE}/farmers/${id}`);
+  return await response.json();
+};
 
-export default api;
+export const createFarmer = async (farmerData) => {
+  const response = await fetch(`${API_BASE}/farmers`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(farmerData)
+  });
+  return await response.json();
+};
+
+export const updateFarmer = async (id, farmerData) => {
+  const response = await fetch(`${API_BASE}/farmers/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(farmerData)
+  });
+  return await response.json();
+};
+
+export const deleteFarmer = async (id) => {
+  const response = await fetch(`${API_BASE}/farmers/${id}`, {
+    method: 'DELETE'
+  });
+  return await response.json();
+};
