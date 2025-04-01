@@ -1,6 +1,31 @@
 const bcrypt = require('bcryptjs');
 const { Admin } = require('../models');
 
+// Update user (Admin only)
+const updateUser = async (req, res) => {
+  try {
+    if (req.user.role !== 'Administrator') {
+      return res.status(403).json({ error: 'Only administrators can update users' });
+    }
+
+    const { id } = req.params;
+    const [updated] = await Admin.update(req.body, {
+      where: { id }
+    });
+    
+    if (updated) {
+      const updatedUser = await Admin.findByPk(id, {
+        attributes: ['id', 'username', 'email', 'role', 'isActive']
+      });
+      res.json(updatedUser);
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 // Create new user (Admin only)
 const createUser = async (req, res) => {
   try {
@@ -73,5 +98,6 @@ const changePassword = async (req, res) => {
 module.exports = {
   createUser,
   getUsers,
-  changePassword
+  changePassword,
+  updateUser
 };
