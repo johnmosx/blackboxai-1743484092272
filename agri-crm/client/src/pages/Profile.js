@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography } from 'antd';
+import { Card, Typography, Descriptions, Avatar } from 'antd';
 import ChangePassword from '../components/ChangePassword';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -10,15 +10,23 @@ const Profile = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <Card title={<Title level={3}>User Profile</Title>}>
-        <div style={{ marginBottom: 24 }}>
-          <p><strong>Username:</strong> {currentUser?.username}</p>
-          <p><strong>Email:</strong> {currentUser?.email}</p>
-          <p><strong>Role:</strong> {currentUser?.role}</p>
-        </div>
+      <Card 
+        title={<Title level={3}>User Profile</Title>}
+        extra={<Avatar size={64}>{currentUser?.username?.charAt(0)}</Avatar>}
+      >
+        <Descriptions bordered column={1}>
+          <Descriptions.Item label="Username">{currentUser?.username}</Descriptions.Item>
+          <Descriptions.Item label="Email">{currentUser?.email}</Descriptions.Item>
+          <Descriptions.Item label="Role">{currentUser?.role}</Descriptions.Item>
+          <Descriptions.Item label="Last Login">
+            {currentUser?.lastLogin ? new Date(currentUser.lastLogin).toLocaleString() : 'Never'}
+          </Descriptions.Item>
+        </Descriptions>
 
-        <Title level={4}>Change Password</Title>
-        <ChangePassword />
+        <div style={{ marginTop: 24 }}>
+          <Title level={4}>Change Password</Title>
+          <ChangePassword />
+        </div>
       </Card>
     </div>
   );
