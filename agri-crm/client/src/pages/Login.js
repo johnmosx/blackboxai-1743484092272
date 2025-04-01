@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
+    const [credentials, setCredentials] = useState({
+      username: '',
+      password: ''
+    });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -39,11 +39,11 @@ const Login = () => {
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
+                  <Form.Label>Username</Form.Label>
                   <Form.Control
-                    type="email"
-                    name="email"
-                    value={credentials.email}
+                    type="text"
+                    name="username"
+                    value={credentials.username}
                     onChange={handleChange}
                     required
                   />
