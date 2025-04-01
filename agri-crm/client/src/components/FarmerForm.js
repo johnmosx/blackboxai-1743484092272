@@ -1,68 +1,93 @@
 import React from 'react';
-import { Form, Input, Button, Select } from 'antd';
-
-const { Option } = Select;
+import { Form, Button, Card, Alert } from 'react-bootstrap';
 
 const FarmerForm = ({ initialValues, onFinish }) => {
-  const [form] = Form.useForm();
+  const [error, setError] = React.useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const farmerData = {
+      name: formData.get('name'),
+      phone: formData.get('phone'),
+      location: formData.get('location'),
+      farmSize: formData.get('farmSize'),
+      cropType: formData.get('cropType')
+    };
+    
+    try {
+      setError('');
+      onFinish(farmerData);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
   return (
-    <Form
-      form={form}
-      initialValues={initialValues}
-      onFinish={onFinish}
-      layout="vertical"
-    >
-      <Form.Item
-        name="name"
-        label="Full Name"
-        rules={[{ required: true, message: 'Please input farmer name' }]}
-      >
-        <Input />
-      </Form.Item>
+    <Card>
+      <Card.Body>
+        <h2 className="text-center mb-4">
+          {initialValues ? 'Edit Farmer' : 'Add New Farmer'}
+        </h2>
+        
+        {error && <Alert variant="danger">{error}</Alert>}
+        
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-3">
+            <Form.Label>Full Name</Form.Label>
+            <Form.Control 
+              type="text" 
+              name="name" 
+              defaultValue={initialValues?.name} 
+              required 
+            />
+          </Form.Group>
 
-      <Form.Item
-        name="phone"
-        label="Phone Number"
-        rules={[{ required: true, message: 'Please input phone number' }]}
-      >
-        <Input />
-      </Form.Item>
+          <Form.Group className="mb-3">
+            <Form.Label>Phone Number</Form.Label>
+            <Form.Control 
+              type="tel" 
+              name="phone" 
+              defaultValue={initialValues?.phone} 
+              required 
+            />
+          </Form.Group>
 
-      <Form.Item
-        name="location"
-        label="Location"
-        rules={[{ required: true, message: 'Please input location' }]}
-      >
-        <Input />
-      </Form.Item>
+          <Form.Group className="mb-3">
+            <Form.Label>Location</Form.Label>
+            <Form.Control 
+              type="text" 
+              name="location" 
+              defaultValue={initialValues?.location} 
+              required 
+            />
+          </Form.Group>
 
-      <Form.Item
-        name="farmSize"
-        label="Farm Size (acres)"
-        rules={[{ required: true, message: 'Please input farm size' }]}
-      >
-        <Input type="number" />
-      </Form.Item>
+          <Form.Group className="mb-3">
+            <Form.Label>Farm Size (acres)</Form.Label>
+            <Form.Control 
+              type="number" 
+              name="farmSize" 
+              defaultValue={initialValues?.farmSize} 
+              required 
+            />
+          </Form.Group>
 
-      <Form.Item
-        name="cropType"
-        label="Primary Crop"
-        rules={[{ required: true, message: 'Please select crop type' }]}
-      >
-        <Select>
-          <Option value="wheat">Wheat</Option>
-          <Option value="corn">Corn</Option>
-          <Option value="soybeans">Soybeans</Option>
-        </Select>
-      </Form.Item>
+          <Form.Group className="mb-3">
+            <Form.Label>Primary Crop</Form.Label>
+            <Form.Select name="cropType" defaultValue={initialValues?.cropType}>
+              <option value="wheat">Wheat</option>
+              <option value="corn">Corn</option>
+              <option value="soybeans">Soybeans</option>
+            </Form.Select>
+          </Form.Group>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          {initialValues ? 'Update Farmer' : 'Create Farmer'}
-        </Button>
-      </Form.Item>
-    </Form>
+          <Button variant="primary" type="submit" className="w-100">
+            {initialValues ? 'Update Farmer' : 'Create Farmer'}
+          </Button>
+        </Form>
+      </Card.Body>
+    </Card>
   );
 };
 
