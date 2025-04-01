@@ -3,6 +3,7 @@ const cors = require('cors');
 const db = require('./models');
 const farmerRoutes = require('./routes/farmers');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 // Routes
 app.use('/api/farmers', farmerRoutes);
 app.use('/api', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Database connection
 db.sequelize.sync()
