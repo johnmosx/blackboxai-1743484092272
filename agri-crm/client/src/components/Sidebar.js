@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import {
   FaTachometerAlt,
   FaUsers,
@@ -10,39 +10,43 @@ import {
 } from 'react-icons/fa';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
   return (
     <Nav className="flex-column p-3" style={{ minHeight: '100vh' }}>
-      <LinkContainer to="/" exact>
-        <Nav.Link className="mb-2">
-          <FaTachometerAlt className="me-2" />
-          Dashboard
-        </Nav.Link>
-      </LinkContainer>
-      <LinkContainer to="/farmers">
-        <Nav.Link className="mb-2">
-          <FaUsers className="me-2" />
-          Farmers
-        </Nav.Link>
-      </LinkContainer>
-      <LinkContainer to="/crops">
-        <Nav.Link className="mb-2">
-          <FaSeedling className="me-2" />
-          Crops
-        </Nav.Link>
-      </LinkContainer>
-      <LinkContainer to="/reports">
-        <Nav.Link className="mb-2">
-          <FaChartBar className="me-2" />
-          Reports
-        </Nav.Link>
-      </LinkContainer>
+      <Nav.Link 
+        className="mb-2" 
+        onClick={() => navigate('/')}
+      >
+        <FaTachometerAlt className="me-2" />
+        Dashboard
+      </Nav.Link>
+      <Nav.Link 
+        className="mb-2"
+        onClick={() => navigate('/farmers')}
+      >
+        <FaUsers className="me-2" />
+        Farmers
+      </Nav.Link>
+      <Nav.Link 
+        className="mb-2"
+        onClick={() => navigate('/crops')}
+      >
+        <FaSeedling className="me-2" />
+        Crops
+      </Nav.Link>
+      <Nav.Link 
+        className="mb-2"
+        onClick={() => navigate('/reports')}
+      >
+        <FaChartBar className="me-2" />
+        Reports
+      </Nav.Link>
       <div className="mt-auto">
-        <LinkContainer to="/settings">
-          <Nav.Link>
-            <FaCog className="me-2" />
-            Settings
-          </Nav.Link>
-        </LinkContainer>
+        <Nav.Link onClick={() => navigate('/settings')}>
+          <FaCog className="me-2" />
+          Settings
+        </Nav.Link>
       </div>
     </Nav>
   );
