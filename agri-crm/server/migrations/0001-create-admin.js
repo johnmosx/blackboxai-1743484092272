@@ -25,6 +25,16 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      role: {
+        type: Sequelize.ENUM('Administrator', 'Manager', 'Farm Expert'),
+        allowNull: false,
+        defaultValue: 'Farm Expert'
+      },
+      isActive: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
