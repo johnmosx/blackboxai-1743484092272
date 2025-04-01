@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { login } from '../api';
+import { login, changePassword } from '../api';
 
 const AuthContext = createContext();
 
@@ -8,11 +8,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on initial load
     const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      setCurrentUser(user);
-    }
+    if (user) setCurrentUser(user);
     setLoading(false);
   }, []);
 
@@ -28,13 +25,27 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   };
 
+  const updatePassword = async (currentPassword, newPassword) => {
+    await changePassword(currentPassword, newPassword);
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{
+      currentUser,
+      signIn,
+      signOut,
+      updatePassword,
+      loading
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return context;
 }
