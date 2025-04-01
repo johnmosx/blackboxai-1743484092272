@@ -27,9 +27,15 @@ const FarmerTable = () => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.location}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.contact}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <Link 
-                  to={`/farmers/${farmer.id}`} 
+                <Link
+                  to={`/farmers/${farmer.id}`}
                   className="text-green-600 hover:text-green-900 mr-3"
+                >
+                  Edit
+                </Link>
+                <Link
+                  to={`/farmers/view/${farmer.id}`}
+                  className="text-blue-600 hover:text-blue-900 mr-3"
                 >
                   View
                 </Link>
