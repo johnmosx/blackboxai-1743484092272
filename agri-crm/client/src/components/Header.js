@@ -1,32 +1,47 @@
 import React from 'react';
-import { Navbar, Container, Nav, Dropdown } from 'react-bootstrap';
-import { FaUserCircle } from 'react-icons/fa';
+import { Layout, Menu, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-const Header = () => {
+const { Header } = Layout;
+
+const AppHeader = () => {
+  const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
+
   return (
-    <Navbar bg="dark" variant="dark" expand="lg" className="shadow-sm">
-      <Container fluid>
-        <Navbar.Brand href="/">Agri-CRM</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          <Nav>
-            <Dropdown align="end">
-              <Dropdown.Toggle variant="dark" id="dropdown-basic">
-                <FaUserCircle size={20} className="me-2" />
-                Admin
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#profile">Profile</Dropdown.Item>
-                <Dropdown.Item href="#settings">Settings</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item href="#logout">Logout</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <Header className="header">
+      <div className="logo" />
+      <Menu theme="dark" mode="horizontal" selectedKeys={[]}>
+        <Menu.Item key="1" onClick={() => navigate('/')}>Dashboard</Menu.Item>
+        <Menu.Item key="2" onClick={() => navigate('/farmers')}>Farmers</Menu.Item>
+        <Menu.Item key="3" onClick={() => navigate('/reports')}>Reports</Menu.Item>
+        {currentUser && (
+          <Menu.Item key="4" onClick={() => navigate('/profile')}>Profile</Menu.Item>
+        )}
+      </Menu>
+      {currentUser ? (
+        <Button 
+          type="text" 
+          style={{ color: 'white', float: 'right' }}
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+        >
+          Logout
+        </Button>
+      ) : (
+        <Button 
+          type="text" 
+          style={{ color: 'white', float: 'right' }}
+          onClick={() => navigate('/login')}
+        >
+          Login
+        </Button>
+      )}
+    </Header>
   );
 };
 
-export default Header;
+export default AppHeader;
