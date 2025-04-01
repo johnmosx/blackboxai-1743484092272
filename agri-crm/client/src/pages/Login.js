@@ -1,63 +1,75 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const credentials = {
+      username: formData.get('username'),
+      password: formData.get('password')
+    };
+
     try {
+      setError('');
       setLoading(true);
-      await login(values.username, values.password);
-      message.success('Login successful');
+      await login(credentials);
       navigate('/');
-    } catch (error) {
-      message.error('Login failed: ' + error.message);
+    } catch (err) {
+      setError('Failed to log in: ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '0 auto', paddingTop: 100 }}>
-      <h1>Login</h1>
-      <Form
-        name="basic"
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: 'Please input your username!' }]}
-        >
-          <Input />
-        </Form.Item>
+    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
+      <div className="w-100" style={{ maxWidth: "400px" }}>
+        <Card>
+          <Card.Body>
+            <h2 className="text-center mb-4">Log In</h2>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3" controlId="username">
+                <Form.Label>Username</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="username" 
+                  required 
+                  placeholder="Enter username" 
+                />
+              </Form.Group>
 
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
-        >
-          <Input.Password />
-        </Form.Item>
+              <Form.Group className="mb-3" controlId="password">
+                <Form.Label>Password</Form.Label>
+                <Form.Control 
+                  type="password" 
+                  name="password" 
+                  required 
+                  placeholder="Password" 
+                />
+              </Form.Group>
 
-        <Form.Item>
-          <Button 
-            type="primary" 
-            htmlType="submit" 
-            loading={loading}
-            style={{ width: '100%' }}
-            data-testid="login-button"
-          >
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+              <Button 
+                disabled={loading}
+                className="w-100" 
+                variant="primary" 
+                type="submit"
+              >
+                {loading ? 'Logging in...' : 'Log In'}
+              </Button>
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
+    </Container>
   );
 };
 
