@@ -3,9 +3,11 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert('Admins', [{
-      username: 'admin',
+      username: 'Superadmin',
       email: 'admin@agri-crm.com',
-      password: 'admin123', // In production, use bcrypt hashed password
+      password: 'admin', // Note: In production, use bcrypt hashed password
+      role: 'Administrator',
+      isActive: true,
       createdAt: new Date(),
       updatedAt: new Date()
     }], {});
