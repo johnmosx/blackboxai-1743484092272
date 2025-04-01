@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Select, message } from 'antd';
-import { getUsers, updateUser } from '../api';
-
-const { Option } = Select;
+import { Table, Button, Modal, message, Form } from 'antd';
+import UserForm from '../components/UserForm';
+import { getUsers, updateUser, createUser } from '../api';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -33,15 +32,19 @@ const Users = () => {
     setVisible(true);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values) => {
     try {
-      const values = await form.validateFields();
-      await updateUser(currentUser.id, values);
-      message.success('User role updated successfully');
+      if (currentUser) {
+        await updateUser(currentUser.id, values);
+        message.success('User updated successfully');
+      } else {
+        await createUser(values);
+        message.success('User created successfully');
+      }
       setVisible(false);
       fetchUsers();
     } catch (error) {
-      message.error('Failed to update user role');
+      message.error(error.response?.data?.message || 'Operation failed');
     }
   };
 
@@ -77,6 +80,18 @@ const Users = () => {
 
   return (
     <div>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
+        <h2>User Management</h2>
+        <Button 
+          type="primary" 
+          onClick={() => {
+            setCurrentUser(null);
+            setVisible(true);
+          }}
+        >
+          Create New User
+        </Button>
+      </div>
       <Table 
         columns={columns} 
         dataSource={users} 
@@ -85,23 +100,18 @@ const Users = () => {
       />
 
       <Modal
-        title="Update User Role"
+        title={currentUser ? "Update User" : "Create New User"}
         visible={visible}
         onOk={handleSubmit}
         onCancel={() => setVisible(false)}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            name="role"
-            label="Role"
-            rules={[{ required: true, message: 'Please select a role' }]}
-          >
-            <Select>
-              <Option value="Administrator">Administrator</Option>
-              <Option value="Manager">Manager</Option>
-            </Select>
-          </Form.Item>
-        </Form>
+        <UserForm 
+          initialValues={currentUser}
+          onFinish={async (values) => {
+            await handleSubmit(values);
+            setVisible(false);
+          }}
+        />
       </Modal>
     </div>
   );
