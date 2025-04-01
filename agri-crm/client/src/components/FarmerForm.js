@@ -10,9 +10,8 @@ const FarmerForm = ({ initialValues, onFinish }) => {
     const farmerData = {
       name: formData.get('name'),
       phone: formData.get('phone'),
-      location: formData.get('location'),
-      farmSize: formData.get('farmSize'),
-      cropType: formData.get('cropType')
+      email: formData.get('email'),
+      location: formData.get('location')
     };
     
     try {
@@ -50,6 +49,18 @@ const FarmerForm = ({ initialValues, onFinish }) => {
               name="phone" 
               defaultValue={initialValues?.phone} 
               required 
+              pattern="[0-9]{10}"
+              title="Please enter a valid 10-digit phone number"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Email</Form.Label>
+            <Form.Control 
+              type="email" 
+              name="email" 
+              defaultValue={initialValues?.email} 
+              required
             />
           </Form.Group>
 
@@ -61,25 +72,6 @@ const FarmerForm = ({ initialValues, onFinish }) => {
               defaultValue={initialValues?.location} 
               required 
             />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Farm Size (acres)</Form.Label>
-            <Form.Control 
-              type="number" 
-              name="farmSize" 
-              defaultValue={initialValues?.farmSize} 
-              required 
-            />
-          </Form.Group>
-
-          <Form.Group className="mb-3">
-            <Form.Label>Primary Crop</Form.Label>
-            <Form.Select name="cropType" defaultValue={initialValues?.cropType}>
-              <option value="wheat">Wheat</option>
-              <option value="corn">Corn</option>
-              <option value="soybeans">Soybeans</option>
-            </Form.Select>
           </Form.Group>
 
           <Button variant="primary" type="submit" className="w-100">
