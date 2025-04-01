@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Farmer.associate = (models) => {
-    Farmer.hasMany(models.Crop, {
+    Farmer.hasMany(models.Field, {
       foreignKey: 'farmerId',
-      as: 'crops'
+      as: 'fields'
     });
   };
 
