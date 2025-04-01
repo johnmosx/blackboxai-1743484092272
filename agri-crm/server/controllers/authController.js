@@ -2,6 +2,20 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { Admin } = require('../models');
 
+const verifyToken = (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ valid: false, error: 'No token provided' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    res.json({ valid: true });
+  } catch (error) {
+    res.status(401).json({ valid: false, error: 'Invalid token' });
+  }
+};
+
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -44,5 +58,6 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  login
+  login,
+  verifyToken
 };
