@@ -51,6 +51,7 @@ const Login = () => {
             htmlType="submit" 
             loading={loading}
             style={{ width: '100%' }}
+            data-testid="login-button"
           >
             Login
           </Button>
