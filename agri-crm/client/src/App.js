@@ -8,11 +8,11 @@ import FarmerView from './components/FarmerView';
 import Login from './pages/Login';
 import Crops from './pages/Crops';
 import Reports from './pages/Reports';
+import Users from './pages/Users';
 
 function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Layout><Dashboard /></Layout>} />
       <Route path="/farmers" element={<Layout><Farmers /></Layout>} />
@@ -21,6 +21,7 @@ function App() {
       <Route path="/farmers/view/:id" element={<Layout><FarmerView /></Layout>} />
       <Route path="/crops" element={<Layout><Crops /></Layout>} />
       <Route path="/reports" element={<Layout><Reports /></Layout>} />
+      <Route path="/users" element={<Layout><Users /></Layout>} />
     </Routes>
   );
 }
