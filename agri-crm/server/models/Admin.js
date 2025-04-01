@@ -16,8 +16,22 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    role: {
+      type: DataTypes.ENUM('Administrator', 'Manager', 'Farm Expert'),
+      allowNull: false,
+      defaultValue: 'Farm Expert'
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true
     }
   });
+
+  Admin.associate = function(models) {
+    // Add associations if needed
+  };
 
   return Admin;
 };
