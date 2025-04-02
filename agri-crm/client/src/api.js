@@ -26,11 +26,14 @@ export const changePassword = async (currentPassword, newPassword) => {
 };
 
 export const getCurrentUser = async () => {
-  const response = await fetch(`${API_BASE}/me`, {
+  const response = await fetch(`${API_BASE}/auth/me`, {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
   });
+  if (!response.ok) {
+    throw new Error('Failed to fetch current user');
+  }
   return await response.json();
 };
 
