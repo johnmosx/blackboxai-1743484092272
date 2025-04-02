@@ -18,7 +18,8 @@ const Users = () => {
     setLoading(true);
     try {
       const response = await getUsers();
-      setUsers(response);
+      // Ensure response is an array before setting state
+      setUsers(Array.isArray(response) ? response : []);
     } catch (error) {
       message.error('Failed to fetch users');
     } finally {
