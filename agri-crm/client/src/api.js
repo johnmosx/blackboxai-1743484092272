@@ -52,7 +52,8 @@ export const createUser = async (userData) => {
 
 export const getUsers = async () => {
   const response = await fetch(`${API_BASE}/users`);
-  return await response.json();
+  const data = await response.json();
+  return Array.isArray(data) ? data : [];
 };
 
 export const updateUser = async (id, userData) => {
