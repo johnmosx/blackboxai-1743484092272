@@ -72,6 +72,14 @@ export const updateUser = async (id, userData) => {
   return await response.json();
 };
 
+export const deleteUser = async (id) => {
+  const response = await fetch(`${API_BASE}/users/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+  return await response.json();
+};
+
 // Farmer Management
 export const getFarmers = async () => {
   const response = await fetch(`${API_BASE}/farmers`, {
