@@ -1,7 +1,11 @@
 const API_BASE = 'http://localhost:5000/api';
 
-// Auth
-// Authentication endpoints
+// Helper function to get auth headers
+const getAuthHeaders = () => ({
+  'Authorization': `Bearer ${localStorage.getItem('token')}`
+});
+
+// Auth endpoints
 export const login = async (credentials) => {
   const response = await fetch(`${API_BASE}/login`, {
     method: 'POST',
@@ -18,7 +22,7 @@ export const changePassword = async (currentPassword, newPassword) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      ...getAuthHeaders()
     },
     body: JSON.stringify({ currentPassword, newPassword })
   });
@@ -27,9 +31,7 @@ export const changePassword = async (currentPassword, newPassword) => {
 
 export const verifyToken = async () => {
   const response = await fetch(`${API_BASE}/auth/verify`, {
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    }
+    headers: getAuthHeaders()
   });
   if (!response.ok) {
     throw new Error('Token verification failed');
@@ -43,7 +45,7 @@ export const createUser = async (userData) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      ...getAuthHeaders()
     },
     body: JSON.stringify(userData)
   });
@@ -51,7 +53,9 @@ export const createUser = async (userData) => {
 };
 
 export const getUsers = async () => {
-  const response = await fetch(`${API_BASE}/users`);
+  const response = await fetch(`${API_BASE}/users`, {
+    headers: getAuthHeaders()
+  });
   const data = await response.json();
   return Array.isArray(data) ? data : [];
 };
@@ -60,7 +64,8 @@ export const updateUser = async (id, userData) => {
   const response = await fetch(`${API_BASE}/users/${id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
     },
     body: JSON.stringify(userData)
   });
@@ -69,12 +74,16 @@ export const updateUser = async (id, userData) => {
 
 // Farmer Management
 export const getFarmers = async () => {
-  const response = await fetch(`${API_BASE}/farmers`);
+  const response = await fetch(`${API_BASE}/farmers`, {
+    headers: getAuthHeaders()
+  });
   return await response.json();
 };
 
 export const getFarmer = async (id) => {
-  const response = await fetch(`${API_BASE}/farmers/${id}`);
+  const response = await fetch(`${API_BASE}/farmers/${id}`, {
+    headers: getAuthHeaders()
+  });
   return await response.json();
 };
 
@@ -82,7 +91,8 @@ export const createFarmer = async (farmerData) => {
   const response = await fetch(`${API_BASE}/farmers`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
     },
     body: JSON.stringify(farmerData)
   });
@@ -93,7 +103,8 @@ export const updateFarmer = async (id, farmerData) => {
   const response = await fetch(`${API_BASE}/farmers/${id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
     },
     body: JSON.stringify(farmerData)
   });
@@ -102,7 +113,8 @@ export const updateFarmer = async (id, farmerData) => {
 
 export const deleteFarmer = async (id) => {
   const response = await fetch(`${API_BASE}/farmers/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: getAuthHeaders()
   });
   return await response.json();
 };
