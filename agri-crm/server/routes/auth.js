@@ -5,6 +5,5 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.post('/login', authController.login);
 router.get('/verify', authMiddleware, authController.verifyToken);
-router.get('/me', authMiddleware, authController.getCurrentUser);
 
 module.exports = router;
