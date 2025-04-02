@@ -1,22 +1,31 @@
+const jwt = require('jsonwebtoken');
+
 const roleMiddleware = (requiredRole) => {
   return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const userRole = req.user.role;
+    const token = req.headers.authorization?.split(' ')[1];
     
-    // Administrator has access to everything
-    if (userRole === 'Administrator') {
-      return next();
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized - No token provided' });
     }
 
-    // Check if user has the required role
-    if (userRole !== requiredRole) {
-      return res.status(403).json({ error: 'Forbidden - Insufficient permissions' });
-    }
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      const userRole = decoded.role;
 
-    next();
+      // Administrator has access to everything
+      if (userRole === 'Administrator') {
+        return next();
+      }
+
+      // Check if user has the required role
+      if (userRole !== requiredRole) {
+        return res.status(403).json({ error: 'Forbidden - Insufficient permissions' });
+      }
+
+      next();
+    } catch (error) {
+      return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+    }
   };
 };
 
