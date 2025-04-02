@@ -7,20 +7,17 @@ const { Title } = Typography;
 
 const Profile = () => {
   const { currentUser } = useAuth();
-
+  const user = currentUser.user;
   return (
     <div style={{ padding: 24 }}>
       <Card 
         title={<Title level={3}>User Profile</Title>}
-        extra={<Avatar size={64}>{currentUser?.username?.charAt(0)}</Avatar>}
+        extra={<Avatar size={60} padding={10}>{user?.username?.charAt(0)}</Avatar>}
       >
         <Descriptions bordered column={1}>
-          <Descriptions.Item label="Username">{currentUser?.username}</Descriptions.Item>
-          <Descriptions.Item label="Email">{currentUser?.email}</Descriptions.Item>
-          <Descriptions.Item label="Role">{currentUser?.role}</Descriptions.Item>
-          <Descriptions.Item label="Last Login">
-            {currentUser?.lastLogin ? new Date(currentUser.lastLogin).toLocaleString() : 'Never'}
-          </Descriptions.Item>
+          <Descriptions.Item label="Username">{user?.username}</Descriptions.Item>
+          <Descriptions.Item label="Email">{user?.email}</Descriptions.Item>
+          <Descriptions.Item label="Role">{user?.role}</Descriptions.Item>
         </Descriptions>
 
         <div style={{ marginTop: 24 }}>
