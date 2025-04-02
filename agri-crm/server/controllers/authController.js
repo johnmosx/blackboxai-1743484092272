@@ -57,7 +57,23 @@ const login = async (req, res) => {
   }
 };
 
+const getCurrentUser = async (req, res) => {
+  try {
+    // Return minimal user info without sensitive data
+    const user = {
+      id: req.user.id,
+      username: req.user.username,
+      email: req.user.email,
+      role: req.user.role
+    };
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching user data' });
+  }
+};
+
 module.exports = {
   login,
-  verifyToken
+  verifyToken,
+  getCurrentUser
 };
