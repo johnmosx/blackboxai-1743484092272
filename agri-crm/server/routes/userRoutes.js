@@ -12,5 +12,6 @@ router.post('/', userController.createUser);
 router.get('/', userController.getUsers);
 router.post('/change-password', userController.changePassword);
 router.put('/:id', roleMiddleware('Administrator'), userController.updateUser);
+router.delete('/:id', roleMiddleware('Administrator'), userController.deleteUser);
 
 module.exports = router;
