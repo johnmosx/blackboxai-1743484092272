@@ -22,9 +22,7 @@ export function AuthProvider({ children }) {
       return true;
     } catch (error) {
       setTokenValid(false);
-      if (error.message.includes('401')) {
-        signOut();
-      }
+      signOut();
       return false;
     }
   }, [signOut]);
@@ -48,7 +46,7 @@ export function AuthProvider({ children }) {
     if (response.token) {
       localStorage.setItem('token', response.token);
       const user = {
-        username: credentials.username,
+        user: response.user,
         token: response.token
       };
       localStorage.setItem('user', JSON.stringify(user));
