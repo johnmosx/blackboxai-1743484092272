@@ -95,9 +95,32 @@ const changePassword = async (req, res) => {
   }
 };
 
+// Delete user (Admin only)
+const deleteUser = async (req, res) => {
+  try {
+    if (req.user.role !== 'Administrator') {
+      return res.status(403).json({ error: 'Only administrators can delete users' });
+    }
+
+    const { id } = req.params;
+    const deleted = await Admin.destroy({
+      where: { id }
+    });
+    
+    if (deleted) {
+      res.json({ message: 'User deleted successfully' });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createUser,
   getUsers,
   changePassword,
-  updateUser
+  updateUser,
+  deleteUser
 };
