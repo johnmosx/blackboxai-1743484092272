@@ -1,24 +1,26 @@
+import React, { useEffect } from 'react';
 import { Form, Input, Button, Space } from 'antd';
 
-export default function FarmerForm({ onFinish, onCancel }) {
+const FarmerForm = ({ initialValues = {}, onFinish, onCancel }) => {
   const [form] = Form.useForm();
-    // Set initial values when component mounts or changes
-    useEffect(() => {
-      form.setFieldsValue(initialValues || {});
-    }, [form, initialValues]);
+
+  useEffect(() => {
+    form.setFieldsValue(initialValues);
+  }, [form, initialValues]);
 
   return (
     <Form
       form={form}
       layout="vertical"
       onFinish={onFinish}
+      initialValues={initialValues}
     >
       <Form.Item
         name="name"
         label="Full Name"
         rules={[{ required: true, message: 'Please enter farmer name' }]}
       >
-        <Input placeholder="Enter farmer's full name" />
+        <Input />
       </Form.Item>
 
       <Form.Item
@@ -26,7 +28,7 @@ export default function FarmerForm({ onFinish, onCancel }) {
         label="Phone Number"
         rules={[{ required: true, message: 'Please enter phone number' }]}
       >
-        <Input placeholder="Enter phone number" />
+        <Input />
       </Form.Item>
 
       <Form.Item
@@ -34,13 +36,21 @@ export default function FarmerForm({ onFinish, onCancel }) {
         label="Email"
         rules={[{ type: 'email', message: 'Please enter a valid email' }]}
       >
-        <Input placeholder="Enter email address" />
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="location"
+        label="Location"
+        rules={[{ required: true, message: 'Please enter location' }]}
+      >
+        <Input />
       </Form.Item>
 
       <Form.Item>
         <Space>
           <Button type="primary" htmlType="submit">
-            Save
+            Submit
           </Button>
           <Button onClick={onCancel}>
             Cancel
@@ -49,4 +59,6 @@ export default function FarmerForm({ onFinish, onCancel }) {
       </Form.Item>
     </Form>
   );
-}
+};
+
+export default FarmerForm;
