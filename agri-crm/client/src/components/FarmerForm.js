@@ -2,6 +2,10 @@ import { Form, Input, Button, Space } from 'antd';
 
 export default function FarmerForm({ onFinish, onCancel }) {
   const [form] = Form.useForm();
+    // Set initial values when component mounts or changes
+    useEffect(() => {
+      form.setFieldsValue(initialValues || {});
+    }, [form, initialValues]);
 
   return (
     <Form
