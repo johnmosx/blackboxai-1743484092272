@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message, Form, Space, Card, Tag } from 'antd';
-import { 
+import { Table, Button, Modal, message, Form, Space, Card, Tag, Spin } from 'antd';
+import {
   getCropTypes, 
   createCropType, 
   updateCropType, 
@@ -88,11 +88,6 @@ const Crops = () => {
       render: (text) => text || '-'
     },
     {
-      title: 'Status',
-      key: 'status',
-      render: () => <Tag color="green">Active</Tag>
-    },
-    {
       title: 'Actions',
       key: 'actions',
       render: (_, record) => isAdmin ? (
@@ -150,45 +145,52 @@ const Crops = () => {
 
       <Modal
         title={currentCropType ? "Edit Crop Type" : "Create New Crop Type"}
-        open={false}
+        open={open}
         onOk={() => form.submit()}
         onCancel={() => setOpen(false)}
         confirmLoading={formLoading}
         width={600}
+        okText={currentCropType ? "Update" : "Create"}
+        okButtonProps={{ style: { backgroundColor: '#1890ff', borderColor: '#1890ff' } }}
       >
-        <Form
-          form={form}
-          onFinish={handleSubmit}
-          layout="vertical"
-          initialValues={{
-            name: '',
-            description: ''
-          }}
-        >
-          <Form.Item
-            name="name"
-            label="Crop Type Name"
-            rules={[
-              { required: true, message: 'Please input the crop type name' },
-              { max: 50, message: 'Name cannot exceed 50 characters' }
-            ]}
+        <div style={{ padding: '20px 0' }}>
+          <Form
+            form={form}
+            onFinish={handleSubmit}
+            layout="vertical"
+            initialValues={{
+              name: '',
+              description: ''
+            }}
           >
-            <input className="ant-input" placeholder="Enter crop type name" />
-          </Form.Item>
-          <Form.Item
-            name="description"
-            label="Description"
-            rules={[
-              { max: 200, message: 'Description cannot exceed 200 characters' }
-            ]}
-          >
-            <textarea 
-              className="ant-input" 
-              placeholder="Enter description (optional)"
-              rows={4} 
-            />
-          </Form.Item>
-        </Form>
+            <Form.Item
+              name="name"
+              label="Crop Type Name"
+              rules={[
+                { required: true, message: 'Please input the crop type name' },
+                { max: 50, message: 'Name cannot exceed 50 characters' }
+              ]}
+            >
+              <Input 
+                placeholder="Enter crop type name" 
+                style={{ padding: '10px' }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              rules={[
+                { max: 200, message: 'Description cannot exceed 200 characters' }
+              ]}
+            >
+              <Input.TextArea 
+                placeholder="Enter description (optional)"
+                rows={4}
+                style={{ padding: '10px' }}
+              />
+            </Form.Item>
+          </Form>
+        </div>
       </Modal>
     </div>
   );
