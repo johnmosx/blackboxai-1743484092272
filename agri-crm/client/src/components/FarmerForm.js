@@ -1,33 +1,29 @@
-import { Form, Input, Button, message } from 'antd';
+import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import {Form, Select} from "antd";
+import {useState} from "react";
 
-export default function FarmerForm({ farmer, onSave }) {
-  const [form] = Form.useForm();
-
+export default function FieldForm({ field, cropTypes }) {
+  const [geoJson, setGeoJson] = useState(field?.geoJson || null);
+  
   return (
-    <Form
-      form={form}
-      initialValues={farmer || {}}
-      onFinish={async (values) => {
-        try {
-          await onSave(values);
-          message.success('Farmer saved successfully');
-        } catch (error) {
-          message.error('Failed to save farmer');
-        }
-      }}
-    >
-      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-        <Input />
+    <Form>
+      {/* Field name and other inputs */}
+      <Form.Item name="geoJson" label="Field Boundaries">
+        <MapContainer center={[51.505, -0.09]} zoom={13}>
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {geoJson && <Polygon positions={geoJson.coordinates} />}
+        </MapContainer>
       </Form.Item>
-      <Form.Item name="phone" label="Phone">
-        <Input />
+      <Form.Item name="cropTypeId" label="Current Crop">
+        <Select>
+          {cropTypes.map(crop => (
+            <Select.Option key={crop.id} value={crop.id}>
+              {crop.name}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
-      <Form.Item name="email" label="Email">
-        <Input type="email" />
-      </Form.Item>
-      <Button type="primary" htmlType="submit">
-        Save Farmer
-      </Button>
     </Form>
   );
 }
