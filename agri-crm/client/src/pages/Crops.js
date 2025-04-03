@@ -45,11 +45,15 @@ const Crops = () => {
       cancelText: 'Cancel',
       onOk: async () => {
         try {
-          await deleteCropType(id);
-          message.success('Crop type deleted successfully');
-          fetchCropTypes();
+          const { success, message: responseMessage } = await deleteCropType(id);
+          if (success) {
+            message.success(responseMessage);
+            fetchCropTypes();
+          } else {
+            message.error(responseMessage || 'Failed to delete crop type');
+          }
         } catch (error) {
-          message.error('Failed to delete crop type');
+          message.error(error.message || 'Failed to delete crop type');
         }
       }
     });
