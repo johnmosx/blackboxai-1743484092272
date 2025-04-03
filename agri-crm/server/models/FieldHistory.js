@@ -1,24 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
   const FieldHistory = sequelize.define('FieldHistory', {
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW
-    },
+    plantingDate: DataTypes.DATE,
+    harvestDate: DataTypes.DATE,
     yieldAmount: DataTypes.FLOAT,
     fertilizerUsed: DataTypes.STRING,
     notes: DataTypes.TEXT
   });
 
   FieldHistory.associate = (models) => {
-    FieldHistory.belongsTo(models.Field, {
-      foreignKey: 'fieldId',
-      as: 'field'
-    });
-    FieldHistory.belongsTo(models.CropType, {
-      foreignKey: 'cropTypeId',
-      as: 'cropType'
-    });
+    FieldHistory.belongsTo(models.Field);
+    FieldHistory.belongsTo(models.CropType);
   };
 
   return FieldHistory;
