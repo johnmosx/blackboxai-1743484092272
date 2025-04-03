@@ -6,7 +6,19 @@ import {
   updateCropType, 
   deleteCropType 
 } from '../api';
+
+import { 
+  getPhenologyStages,
+  createPhenologyStage,
+  updatePhenologyStage,
+  deletePhenologyStage
+} from '../api';
+
 import { useAuth } from '../contexts/AuthContext';
+import {BsFillPencilFill, BsTrashFill} from "react-icons/bs";
+
+const { Panel } = Collapse;
+const { TextArea } = Input;
 
 const Crops = () => {
   const [cropTypes, setCropTypes] = useState([]);
@@ -15,6 +27,13 @@ const Crops = () => {
   const [open, setOpen] = useState(false);
   const [currentCropType, setCurrentCropType] = useState(null);
   const [form] = Form.useForm();
+
+  const [selectedCropType, setSelectedCropType] = useState(null);
+  const [stages, setStages] = useState([]);
+  const [stageModalVisible, setStageModalVisible] = useState(false);
+  const [currentStage, setCurrentStage] = useState(null);
+  const [stageForm] = Form.useForm();
+
   
   const authContext = useAuth();
   const user = authContext?.currentUser?.user;
@@ -23,6 +42,12 @@ const Crops = () => {
   useEffect(() => {
     fetchCropTypes();
   }, []);
+
+  useEffect(() => {
+    if (selectedCropType) {
+      fetchStages(selectedCropType.id);
+    }
+  }, [selectedCropType]);
 
   const fetchCropTypes = async () => {
     setLoading(true);
@@ -74,6 +99,51 @@ const Crops = () => {
     }
   };
 
+ // Add to component functions
+const fetchStages = async (cropTypeId) => {
+  try {
+    const data = await getPhenologyStages(cropTypeId);
+    setStages(data);
+  } catch (error) {
+    message.error('Failed to load stages');
+  }
+};
+
+const handleStageSubmit = async (values) => {
+  try {
+    if (currentStage) {
+      await updatePhenologyStage(currentStage.id, values);
+      message.success('Stage updated');
+    } else {
+      await createPhenologyStage({
+        ...values,
+        cropTypeId: selectedCropType.id
+      });
+      message.success('Stage created');
+    }
+    setStageModalVisible(false);
+    fetchStages(selectedCropType.id);
+  } catch (error) {
+    message.error(error.message || 'Operation failed');
+  }
+};
+
+const handleDeleteStage = async (id) => {
+  Modal.confirm({
+    title: 'Delete Stage',
+    content: 'Are you sure?',
+    onOk: async () => {
+      try {
+        await deletePhenologyStage(id);
+        message.success('Stage deleted');
+        fetchStages(selectedCropType.id);
+      } catch (error) {
+        message.error('Failed to delete stage');
+      }
+    }
+  });
+};
+
   const columns = [
     {
       title: 'Name',
@@ -100,14 +170,14 @@ const Crops = () => {
               setOpen(true);
             }}
           >
-            Edit
+            <BsFillPencilFill />
           </Button>
           <Button 
             type="link" 
             danger
             onClick={() => handleDelete(record.id)}
           >
-            Delete
+            <BsTrashFill />
           </Button>
         </Space>
       ) : null,
@@ -120,28 +190,122 @@ const Crops = () => {
   return (
     <div className="p-4">
       <Card
-        title="Crop Type Management"
-        extra={isAdmin && (
-          <Button 
-            type="primary" 
-            onClick={() => {
-              setCurrentCropType(null);
-              form.resetFields();
-              setOpen(true);
-            }}
-          >
-            Add New Crop Type
-          </Button>
-        )}
+  title="Crop Type Management"
+  extra={isAdmin && (
+    <Button 
+      type="primary" 
+      onClick={() => {
+        setCurrentCropType(null);
+        form.resetFields();
+        setOpen(true);
+      }}
+    >
+      Add New Crop Type
+    </Button>
+  )}
+>
+  <Table 
+    columns={columns} 
+    dataSource={cropTypes} 
+    loading={loading}
+    rowKey="id"
+    pagination={{ pageSize: 10 }}
+    onRow={(record) => ({
+      onClick: () => setSelectedCropType(record)
+    })}
+  />
+
+    {selectedCropType && (
+      <div style={{ marginTop: 24 }}>
+        <Card 
+          title={`Phenology Stages for ${selectedCropType.name}`}
+          extra={isAdmin && (
+            <Button 
+              type="primary" 
+              size="small"
+              onClick={() => {
+                setCurrentStage(null);
+                setStageModalVisible(true);
+              }}
+            >
+              Add Stage
+            </Button>
+          )}
+        >
+          <Collapse accordion>
+            {stages.map(stage => (
+              <Panel 
+                header={`${stage.order}. ${stage.name}`} 
+                key={stage.id}
+                extra={isAdmin && (
+                  <Space>
+                    <Button 
+                      size="small" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentStage(stage);
+                        setStageModalVisible(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button 
+                      size="small" 
+                      danger
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteStage(stage.id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Space>
+                )}
+              >
+                <p>{stage.description}</p>
+              </Panel>
+            ))}
+          </Collapse>
+        </Card>
+      </div>
+    )}
+
+    {/* Stage Modal */}
+    <Modal
+      title={currentStage ? "Edit Stage" : "Add New Stage"}
+      visible={stageModalVisible}
+      onOk={() => stageForm.submit()}
+      onCancel={() => setStageModalVisible(false)}
+    >
+      <Form
+        form={stageForm}
+        onFinish={handleStageSubmit}
+        initialValues={currentStage || { order: stages.length + 1 }}
       >
-        <Table 
-          columns={columns} 
-          dataSource={cropTypes} 
-          loading={loading}
-          rowKey="id"
-          pagination={{ pageSize: 10 }}
-        />
-      </Card>
+        <Form.Item
+          name="name"
+          label="Stage Name"
+          rules={[{ required: true }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="order"
+          label="Order"
+          rules={[{ required: true }]}
+        >
+          <Input type="number" min={1} />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          label="Description"
+          rules={[{ required: true }]}
+        >
+          <TextArea rows={4} />
+        </Form.Item>
+      </Form>
+    </Modal>
+  </Card>
 
       <Modal
         title={currentCropType ? "Edit Crop Type" : "Create New Crop Type"}
