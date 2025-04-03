@@ -30,7 +30,7 @@ export const changePassword = async (currentPassword, newPassword) => {
 };
 
 export const verifyToken = async () => {
-  const response = await fetch(`${API_BASE}/auth/verify`, {
+  const response = await fetch(`${API_BASE}/verify`, {
     headers: getAuthHeaders()
   });
   if (!response.ok) {
