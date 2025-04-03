@@ -137,9 +137,18 @@ export const deleteFarmer = async (id) => {
     headers: getAuthHeaders()
   });
   
+  if (response.status === 204) {
+    return { success: true }; // Handle no-content responses
+  }
+  
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to delete farmer');
+    const error = await response.text(); // Get raw response first
+    try {
+      const errorData = JSON.parse(error);
+      throw new Error(errorData.message || 'Failed to delete farmer');
+    } catch {
+      throw new Error(error || 'Failed to delete farmer');
+    }
   }
   
   return await response.json();
