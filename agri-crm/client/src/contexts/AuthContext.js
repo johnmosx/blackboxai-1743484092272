@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { login, changePassword, getCurrentUser } from '../api';
+import {login, changePassword, verifyToken} from '../api';
 
 const AuthContext = createContext();
 
@@ -7,6 +7,13 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tokenValid, setTokenValid] = useState(false);
+
+  const globLSignOut = ()=> {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setCurrentUser(null);
+    setTokenValid(false);
+  }
 
   const signOut = useCallback(() => {
     localStorage.removeItem('user');
@@ -17,7 +24,7 @@ export function AuthProvider({ children }) {
 
   const checkTokenValidity = useCallback(async () => {
     try {
-      await getCurrentUser();
+      await verifyToken();
       setTokenValid(true);
       return true;
     } catch (error) {
@@ -70,7 +77,8 @@ export function AuthProvider({ children }) {
       signIn,
       signOut,
       updatePassword,
-      checkTokenValidity
+      checkTokenValidity,
+      globLSignOut
     }}>
       {children}
     </AuthContext.Provider>
