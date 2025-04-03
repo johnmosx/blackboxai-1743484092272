@@ -3,15 +3,17 @@ const { PhenologyStage, CropType } = require('../models');
 module.exports = {
   createStage: async (req, res) => {
     try {
-      const { cropTypeId, name, description, order } = req.body;
+      const { cropTypeId, name, description, order, startDay } = req.body;
       const cropType = await CropType.findByPk(cropTypeId);
-      if (!cropType) return res.status(404).json({ error: 'Crop type not found' });
-      
+      if (!cropType) {
+        return res.status(404).json({ error: 'Crop type not found' });
+      }
       const stage = await PhenologyStage.create({
         cropTypeId,
-        name, 
+        name,
         description,
-        order
+        order,
+        startDay: startDay || 0
       });
       res.status(201).json(stage);
     } catch (error) {
@@ -24,7 +26,7 @@ module.exports = {
       const { cropTypeId } = req.params;
       const stages = await PhenologyStage.findAll({
         where: { cropTypeId },
-        order: [['order', 'ASC']] 
+        order: [['order', 'ASC']]
       });
       res.json(stages);
     } catch (error) {
