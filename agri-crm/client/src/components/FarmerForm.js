@@ -1,28 +1,47 @@
-import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import {Form, Select} from "antd";
-import {useState} from "react";
+import { Form, Input, Button, Space } from 'antd';
 
-export default function FieldForm({ field, cropTypes }) {
-  const [geoJson, setGeoJson] = useState(field?.geoJson || null);
-  
+export default function FarmerForm({ onFinish, onCancel }) {
+  const [form] = Form.useForm();
+
   return (
-    <Form>
-      {/* Field name and other inputs */}
-      <Form.Item name="geoJson" label="Field Boundaries">
-        <MapContainer center={[51.505, -0.09]} zoom={13}>
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {geoJson && <Polygon positions={geoJson.coordinates} />}
-        </MapContainer>
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={onFinish}
+    >
+      <Form.Item
+        name="name"
+        label="Full Name"
+        rules={[{ required: true, message: 'Please enter farmer name' }]}
+      >
+        <Input placeholder="Enter farmer's full name" />
       </Form.Item>
-      <Form.Item name="cropTypeId" label="Current Crop">
-        <Select>
-          {cropTypes.map(crop => (
-            <Select.Option key={crop.id} value={crop.id}>
-              {crop.name}
-            </Select.Option>
-          ))}
-        </Select>
+
+      <Form.Item
+        name="phone"
+        label="Phone Number"
+        rules={[{ required: true, message: 'Please enter phone number' }]}
+      >
+        <Input placeholder="Enter phone number" />
+      </Form.Item>
+
+      <Form.Item
+        name="email"
+        label="Email"
+        rules={[{ type: 'email', message: 'Please enter a valid email' }]}
+      >
+        <Input placeholder="Enter email address" />
+      </Form.Item>
+
+      <Form.Item>
+        <Space>
+          <Button type="primary" htmlType="submit">
+            Save
+          </Button>
+          <Button onClick={onCancel}>
+            Cancel
+          </Button>
+        </Space>
       </Form.Item>
     </Form>
   );
