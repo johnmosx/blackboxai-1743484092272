@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message, Form, Space, Card, Tag, Spin } from 'antd';
+import { Table, Button, Modal, message, Form, Space, Card, Tag } from 'antd';
 import { 
   getCropTypes, 
   createCropType, 
@@ -16,9 +16,8 @@ const Crops = () => {
   const [currentCropType, setCurrentCropType] = useState(null);
   const [form] = Form.useForm();
   
-  // Safely get auth context with fallback
   const authContext = useAuth();
-  const user = authContext?.user || null;
+  const user = authContext?.currentUser?.user;
   const isAdmin = user?.role === 'Administrator';
 
   useEffect(() => {
@@ -66,7 +65,7 @@ const Crops = () => {
         await createCropType(values);
         message.success('Crop type created successfully');
       }
-      setVisible(false);
+      setOpen(false);
       fetchCropTypes();
     } catch (error) {
       message.error(error.response?.data?.message || 'Operation failed');
@@ -103,7 +102,7 @@ const Crops = () => {
             onClick={() => {
               setCurrentCropType(record);
               form.setFieldsValue(record);
-              setVisible(true);
+              setOpen(true);
             }}
           >
             Edit
@@ -133,7 +132,7 @@ const Crops = () => {
             onClick={() => {
               setCurrentCropType(null);
               form.resetFields();
-              setVisible(true);
+              setOpen(true);
             }}
           >
             Add New Crop Type
@@ -151,9 +150,9 @@ const Crops = () => {
 
       <Modal
         title={currentCropType ? "Edit Crop Type" : "Create New Crop Type"}
-        open={visible}
+        open={false}
         onOk={() => form.submit()}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setOpen(false)}
         confirmLoading={formLoading}
         width={600}
       >
