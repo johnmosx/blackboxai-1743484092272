@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message, Form } from 'antd';
+import { Table, Button, Modal, message, Form, Space } from 'antd';
 import UserForm from '../components/UserForm';
-import { getUsers, updateUser, createUser } from '../api';
+import { getUsers, updateUser, createUser, deleteUser } from '../api';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -31,6 +31,16 @@ const Users = () => {
     setCurrentUser(user);
     form.setFieldsValue({ role: user.role });
     setVisible(true);
+  };
+
+  const handleDeleteUser = async (id) => {
+    try {
+      await deleteUser(id);
+      message.success('User deleted successfully');
+      fetchUsers();
+    } catch (error) {
+      message.error('Failed to delete user');
+    }
   };
 
   const handleSubmit = async (values) => {
@@ -69,12 +79,21 @@ const Users = () => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <Button 
-          type="link" 
-          onClick={() => handleUpdateRole(record)}
-        >
-          Update Role
-        </Button>
+        <Space>
+          <Button 
+            type="link" 
+            onClick={() => handleUpdateRole(record)}
+          >
+            Update Role
+          </Button>
+          <Button 
+            type="link" 
+            danger
+            onClick={() => handleDeleteUser(record.id)}
+          >
+            Delete
+          </Button>
+        </Space>
       ),
     },
   ];
