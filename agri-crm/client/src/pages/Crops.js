@@ -34,6 +34,15 @@ const Crops = () => {
   const [currentStage, setCurrentStage] = useState(null);
   const [stageForm] = Form.useForm();
 
+  useEffect(() => {
+    stageForm.setFieldsValue({
+      name: '',
+      description: '',
+      order: stages.length > 0 ? Math.max(...stages.map(s => s.order)) + 1 : 1,
+      startDay: 0
+    });
+  }, [stageForm, stages]);
+
   
   const authContext = useAuth();
   const user = authContext?.currentUser?.user;
@@ -225,6 +234,12 @@ const handleDeleteStage = async (id) => {
               size="small"
               onClick={() => {
                 setCurrentStage(null);
+                stageForm.setFieldsValue({
+                  name: '',
+                  description: '',
+                  order: stages.length > 0 ? Math.max(...stages.map(s => s.order)) + 1 : 1,
+                  startDay: 0
+                });
                 setStageModalVisible(true);
               }}
             >
@@ -244,6 +259,10 @@ const handleDeleteStage = async (id) => {
                       onClick={(e) => {
                         e.stopPropagation();
                         setCurrentStage(stage);
+                        stageForm.setFieldsValue({
+                          ...stage,
+                          startDay: stage.startDay || 0
+                        });
                         setStageModalVisible(true);
                       }}
                     >
@@ -272,16 +291,26 @@ const handleDeleteStage = async (id) => {
     )}
 
     {/* Stage Modal */}
-    <Modal
-      title={currentStage ? "Edit Stage" : "Add New Stage"}
-      visible={stageModalVisible}
-      onOk={() => stageForm.submit()}
-      onCancel={() => setStageModalVisible(false)}
-    >
+      <Modal
+        title={currentStage ? "Edit Stage" : "Add New Stage"}
+        visible={stageModalVisible}
+        onOk={() => stageForm.submit()}
+        onCancel={() => {
+          setStageModalVisible(false);
+          stageForm.resetFields();
+        }}
+        afterClose={() => {
+          setCurrentStage(null);
+          stageForm.resetFields();
+        }}
+      >
       <Form
         form={stageForm}
         onFinish={handleStageSubmit}
-        initialValues={currentStage || { order: stages.length + 1 }}
+        initialValues={currentStage || { 
+          order: stages.length > 0 ? Math.max(...stages.map(s => s.order)) + 1 : 1,
+          startDay: 0 
+        }}
       >
         <Form.Item
           name="name"
