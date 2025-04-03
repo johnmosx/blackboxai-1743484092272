@@ -122,6 +122,12 @@ export const updateFarmer = async (id, farmerData) => {
     },
     body: JSON.stringify(farmerData)
   });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update farmer');
+  }
+  
   return await response.json();
 };
 
