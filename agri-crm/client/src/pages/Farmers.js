@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Table, Button, Modal, message } from 'antd';
 import { useAuth } from '../contexts/AuthContext';
-import { getFarmers, createFarmer, updateFarmer } from '../api';
+import { getFarmers, createFarmer } from '../api';
 import FarmerForm from '../components/FarmerForm';
-import FarmerFields from '../components/FarmerFields';
-import {Button, Space, Table} from "antd";
 
 export default function Farmers() {
   const [farmers, setFarmers] = useState([]);
-  const [selectedFarmer, setSelectedFarmer] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { isManager } = useAuth();
 
   useEffect(() => {
@@ -15,60 +14,75 @@ export default function Farmers() {
   }, []);
 
   const fetchFarmers = async () => {
-    const data = await getFarmers();
-    setFarmers(data);
+    try {
+      const data = await getFarmers();
+      setFarmers(data);
+    } catch (error) {
+      message.error('Failed to load farmers');
+    }
   };
 
-  const handleSaveFarmer = async (values) => {
-    if (selectedFarmer) {
-      await updateFarmer(selectedFarmer.id, values);
-    } else {
+  const handleCreateFarmer = async (values) => {
+    try {
       await createFarmer(values);
+      message.success('Farmer created successfully');
+      setIsModalVisible(false);
+      fetchFarmers();
+    } catch (error) {
+      message.error('Failed to create farmer');
     }
-    fetchFarmers();
-    setSelectedFarmer(null);
   };
+
+  const columns = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+  ];
 
   return (
     <div>
       <h1>Farmers Management</h1>
+      
       {isManager && (
-        <div>
-          <Button 
-            type="primary" 
-            onClick={() => setSelectedFarmer({})}
-          >
-            Add New Farmer
-          </Button>
-          {selectedFarmer && (
-            <FarmerForm 
-              farmer={selectedFarmer} 
-              onSave={handleSaveFarmer} 
-            />
-          )}
-          <Table
-            dataSource={farmers}
-            columns={[
-              { title: 'Name', dataIndex: 'name' },
-              { title: 'Phone', dataIndex: 'phone' },
-              { 
-                title: 'Actions',
-                render: (_, farmer) => (
-                  <Space>
-                    <Button onClick={() => setSelectedFarmer(farmer)}>
-                      Edit
-                    </Button>
-                    <Button onClick={() => {/* View fields */}}>
-                      View Fields
-                    </Button>
-                  </Space>
-                )
-              }
-            ]}
-            rowKey="id"
-          />
-        </div>
+        <Button 
+          type="primary" 
+          onClick={() => setIsModalVisible(true)}
+          style={{ marginBottom: 16 }}
+        >
+          Add New Farmer
+        </Button>
       )}
+
+      <Table 
+        columns={columns} 
+        dataSource={farmers} 
+        rowKey="id"
+        bordered
+      />
+
+      <Modal
+        title="Create New Farmer"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+      >
+        <FarmerForm 
+          onFinish={handleCreateFarmer} 
+          onCancel={() => setIsModalVisible(false)}
+        />
+      </Modal>
     </div>
   );
 }
