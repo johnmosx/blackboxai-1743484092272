@@ -3,6 +3,7 @@ const cors = require('cors');
 const db = require('./models');
 const farmerRoutes = require('./routes/farmers');
 const authRoutes = require('./routes/auth');
+const phenologyStageRoutes = require('./routes/phenologyStageRoutes');
 const userRoutes = require('./routes/userRoutes');
 const fieldRoutes = require('./routes/fieldRoutes');
 const cropTypeRoutes = require('./routes/cropTypeRoutes');
@@ -19,6 +20,8 @@ app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/fields', fieldRoutes);
 app.use('/api/crop-types', cropTypeRoutes);
+app.use('/phenology-stages', phenologyStageRoutes);
+
 
 // Database connection
 db.sequelize.sync()
