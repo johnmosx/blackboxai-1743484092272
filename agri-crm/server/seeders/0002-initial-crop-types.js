@@ -5,14 +5,12 @@ module.exports = {
     await queryInterface.bulkInsert('CropTypes', [
       {
         name: 'Olive Trees',
-        icon: '🌳',
         description: 'Traditional olive tree cultivation',
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         name: 'Avocado Trees', 
-        icon: '🥑',
         description: 'Avocado plantation',
         createdAt: new Date(),
         updatedAt: new Date()
