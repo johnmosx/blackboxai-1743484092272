@@ -15,9 +15,12 @@ exports.getFarmerDetails = async (req, res) => {
       include: [
         {
           model: Field,
+          as: 'fields',
           include: [
             {
               model: FieldHistory,
+              order: [['createdAt', 'DESC']],
+              as: 'fieldHistories', // Add this line to match the association alias
               order: [['createdAt', 'DESC']],
               limit: 1
             },
@@ -68,9 +71,16 @@ exports.updateFarmer = async (req, res) => {
       include: [{
         model: Field,
         include: [{
-          model: FieldHistory,
-          order: [['createdAt', 'DESC']],
-          limit: 1
+          model: Field,
+          as: 'fields',
+          attributes: ['id', 'name', 'area'],
+          include: [{
+            model: FieldHistory,
+            as: 'fieldHistories', // Add this line to match the association alias
+            attributes: ['yieldAmount'],
+            order: [['createdAt', 'DESC']],
+            limit: 1
+          }]
         }]
       }]
     });
