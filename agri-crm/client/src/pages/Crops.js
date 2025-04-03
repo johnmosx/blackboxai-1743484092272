@@ -262,7 +262,8 @@ const handleDeleteStage = async (id) => {
                   </Space>
                 )}
               >
-                <p>{stage.description}</p>
+              <p><strong>Description:</strong> {stage.description}</p>
+              <p><strong>Starts:</strong> Day {stage.startDay} after planting</p>
               </Panel>
             ))}
           </Collapse>
@@ -289,13 +290,20 @@ const handleDeleteStage = async (id) => {
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="order"
-          label="Order"
-          rules={[{ required: true }]}
-        >
-          <Input type="number" min={1} />
-        </Form.Item>
+      <Form.Item
+        name="order" 
+        label="Order"
+        rules={[{ required: true }]}
+      >
+        <Input type="number" min={1} />
+      </Form.Item>
+      <Form.Item
+        name="startDay"
+        label="Start Day (days after planting)"
+        rules={[{ required: true }]}
+      >
+        <Input type="number" min={0} />
+      </Form.Item>
         <Form.Item
           name="description"
           label="Description"
