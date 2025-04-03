@@ -13,7 +13,7 @@ module.exports = {
         name,
         description,
         order,
-        startDay: startDay || 0
+        startDay: startDay
       });
       res.status(201).json(stage);
     } catch (error) {
