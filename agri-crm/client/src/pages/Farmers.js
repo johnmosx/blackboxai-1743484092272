@@ -114,7 +114,8 @@ const handleUpdateFarmer = async (values) => {
         destroyOnClose
       >
         <FarmerForm 
-          onFinish={handleCreateFarmer} 
+          initialValues={{}} 
+          onFinish={handleCreateFarmer}
           onCancel={() => setIsModalVisible(false)}
         />
       </Modal>
@@ -125,8 +126,8 @@ const handleUpdateFarmer = async (values) => {
       footer={null}
       destroyOnClose
     >
-      <FarmerForm 
-        initialValues={editingFarmer}
+      <FarmerForm
+        initialValues={editingFarmer || {}}
         onFinish={handleUpdateFarmer}
         onCancel={() => setIsEditModalVisible(false)}
       />
