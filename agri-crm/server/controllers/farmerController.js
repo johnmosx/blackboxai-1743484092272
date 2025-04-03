@@ -112,6 +112,7 @@ exports.getFarmers = async (req, res) => {
       order: [['name', 'ASC']],
       include: [{
         model: Field,
+        as: 'fields',
         attributes: ['id', 'name', 'area'],
         include: [{
           model: FieldHistory,
@@ -122,7 +123,6 @@ exports.getFarmers = async (req, res) => {
       }]
     });
 
-    // Format response to include latest yield
     const formattedFarmers = farmers.map(farmer => ({
       ...farmer.get({ plain: true }),
       fields: farmer.fields.map(field => ({
