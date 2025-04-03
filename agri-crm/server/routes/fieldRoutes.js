@@ -4,15 +4,14 @@ const fieldController = require('../controllers/fieldController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// Apply auth middleware to all routes
 router.use(authMiddleware);
 
-// Field management routes
-router.post('/', roleMiddleware('Manager'), fieldController.createField);
-router.get('/farmer/:farmerId', fieldController.getFarmerFields);
+// Manager-only routes
+router.post('/', roleMiddleware('Manager'), fieldController.addFieldWithHistory);
+router.put('/:id', roleMiddleware('Manager'), fieldController.updateField);
+router.delete('/:id', roleMiddleware('Manager'), fieldController.deleteField);
 
-// Field history routes
-router.post('/:fieldId/history', roleMiddleware('Manager'), fieldController.addFieldHistory);
-router.put('/:fieldId/crop', roleMiddleware('Manager'), fieldController.updateFieldCrop);
+// Public routes
+router.get('/:id', fieldController.getFieldWithHistory);
 
 module.exports = router;
