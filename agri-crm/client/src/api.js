@@ -125,7 +125,7 @@ export const updateFarmer = async (id, farmerData) => {
   
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Failed to update farmer');
+    throw new Error(error.error || 'Failed to update farmer');
   }
   
   return await response.json();
