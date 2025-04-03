@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, message, Form, Space } from 'antd';
 import UserForm from '../components/UserForm';
 import { getUsers, updateUser, createUser, deleteUser } from '../api';
+import {BsArrowUpCircleFill, BsTrashFill} from "react-icons/bs";
+
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -84,14 +86,14 @@ const Users = () => {
             type="link" 
             onClick={() => handleUpdateRole(record)}
           >
-            Update Role
+            <BsArrowUpCircleFill />
           </Button>
           <Button 
             type="link" 
             danger
             onClick={() => handleDeleteUser(record.id)}
           >
-            Delete
+            <BsTrashFill />
           </Button>
         </Space>
       ),
