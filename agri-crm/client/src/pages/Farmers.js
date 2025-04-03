@@ -7,8 +7,8 @@ import FarmerForm from '../components/FarmerForm';
 export default function Farmers() {
   const [farmers, setFarmers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { curretUser } = useAuth();
-  const currentUser = curretUser.user;
+  const authContext = useAuth();
+  const currentUser = authContext?.currentUser?.user;
   // Check if user is admin or manager
   const canEdit = currentUser?.role === 'Administrator' || currentUser?.role === 'Manager';
 
