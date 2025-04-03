@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Table, Button, Modal, message, Space } from 'antd';
 import { useAuth } from '../contexts/AuthContext';
-import { getFarmers, createFarmer } from '../api';
+import {getFarmers, createFarmer, updateFarmer, deleteFarmer} from '../api';
 import FarmerForm from '../components/FarmerForm';
 
 export default function Farmers() {
