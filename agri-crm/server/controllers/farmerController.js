@@ -105,3 +105,35 @@ exports.deleteFarmer = async (req, res) => {
   }
 };
 
+exports.getFarmers = async (req, res) => {
+  try {
+    const farmers = await Farmer.findAll({
+      attributes: ['id', 'name', 'phone', 'email', 'createdAt'],
+      order: [['name', 'ASC']],
+      include: [{
+        model: Field,
+        attributes: ['id', 'name', 'area'],
+        include: [{
+          model: FieldHistory,
+          attributes: ['yieldAmount'],
+          order: [['createdAt', 'DESC']],
+          limit: 1
+        }]
+      }]
+    });
+
+    // Format response to include latest yield
+    const formattedFarmers = farmers.map(farmer => ({
+      ...farmer.get({ plain: true }),
+      fields: farmer.fields.map(field => ({
+        ...field.get({ plain: true }),
+        latestYield: field.fieldHistories[0]?.yieldAmount || null
+      }))
+    }));
+
+    res.json(formattedFarmers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
