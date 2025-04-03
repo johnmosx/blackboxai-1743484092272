@@ -185,7 +185,10 @@ export const createPhenologyStage = async (stageData) => {
       'Content-Type': 'application/json',
       ...getAuthHeaders()
     },
-    body: JSON.stringify(stageData)
+    body: JSON.stringify({
+      ...stageData,
+      startDay: stageData.startDay || 0
+    })
   });
   return await response.json();
 };
@@ -204,7 +207,10 @@ export const updatePhenologyStage = async (id, stageData) => {
       'Content-Type': 'application/json',
       ...getAuthHeaders()
     },
-    body: JSON.stringify(stageData)
+    body: JSON.stringify({
+      ...stageData,
+      startDay: stageData.startDay || 0
+    })
   });
   return await response.json();
 };
