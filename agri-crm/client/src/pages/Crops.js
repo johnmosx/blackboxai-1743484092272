@@ -144,7 +144,7 @@ const Crops = () => {
 
       <Modal
         title={currentCropType ? "Edit Crop Type" : "Create New Crop Type"}
-        visible={visible}
+        open={visible}
         onOk={() => form.submit()}
         onCancel={() => setVisible(false)}
         confirmLoading={formLoading}
