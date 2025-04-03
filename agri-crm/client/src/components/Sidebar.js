@@ -37,7 +37,7 @@ const Sidebar = () => {
         Reports
       </Nav.Link>
 
-      {currentUser?.role === 'Administrator' && (
+      {currentUser.user?.role === 'Administrator' && (
         <Nav.Link onClick={() => navigate('/users')}>
           <FaUser className="me-2" />
           User Management
