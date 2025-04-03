@@ -39,14 +39,6 @@ const FarmerForm = ({ initialValues = {}, onFinish, onCancel }) => {
         <Input />
       </Form.Item>
 
-      <Form.Item
-        name="location"
-        label="Location"
-        rules={[{ required: true, message: 'Please enter location' }]}
-      >
-        <Input />
-      </Form.Item>
-
       <Form.Item>
         <Space>
           <Button type="primary" htmlType="submit">
