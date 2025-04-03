@@ -44,10 +44,9 @@ module.exports = {
         where: { id }
       });
       if (deleted) {
-        res.json({ success: true, message: 'Crop type deleted successfully' });
-      } else {
-        res.status(404).json({ success: false, error: 'Crop type not found' });
+        return res.status(200).json({ success: true, message: 'Crop type deleted successfully' });
       }
+      return res.status(404).json({ success: false, error: 'Crop type not found' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
