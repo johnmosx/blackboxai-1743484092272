@@ -36,24 +36,50 @@ export default function Farmers() {
     }
   };
 
+  // Add to component state
+  const [deletingId, setDeletingId] = useState(null);
+
+  // Update handleDelete to track loading state
+  const handleDelete = async (farmerId) => {
+    Modal.confirm({
+      title: 'Confirm Delete',
+      content: 'Are you sure you want to delete this farmer?',
+      okText: 'Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        setDeletingId(farmerId);
+        try {
+          await deleteFarmer(farmerId);
+          message.success('Farmer deleted successfully');
+          fetchFarmers();
+        } catch (error) {
+          message.error(error.message || 'Failed to delete farmer');
+        } finally {
+          setDeletingId(null);
+        }
+      }
+    });
+  };
+
   const [editingFarmer, setEditingFarmer] = useState(null);
-const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-const handleEditClick = (farmer) => {
-  setEditingFarmer(farmer);
-  setIsEditModalVisible(true);
-};
+  const handleEditClick = (farmer) => {
+    setEditingFarmer(farmer);
+    setIsEditModalVisible(true);
+  };
 
-const handleUpdateFarmer = async (values) => {
-  try {
-    await updateFarmer(editingFarmer.id, values);
-    message.success('Farmer updated successfully');
-    setIsEditModalVisible(false);
-    fetchFarmers();
-  } catch (error) {
-    message.error(error.message || 'Failed to update farmer');
-  }
-};
+  const handleUpdateFarmer = async (values) => {
+    try {
+      await updateFarmer(editingFarmer.id, values);
+      message.success('Farmer updated successfully');
+      setIsEditModalVisible(false);
+      fetchFarmers();
+    } catch (error) {
+      message.error(error.message || 'Failed to update farmer');
+    }
+  };
 
   const columns = [
     {
@@ -78,7 +104,13 @@ const handleUpdateFarmer = async (values) => {
         canEdit && (
           <Space>
           <Button onClick={() => handleEditClick(farmer)}>Edit</Button>
-          <Button danger onClick={() => handleDelete(farmer.id)}>Delete</Button>
+          <Button 
+            danger 
+            onClick={() => handleDelete(farmer.id)}
+            loading={deletingId === farmer.id}
+          >
+            Delete
+          </Button>
         </Space>
         )
       ),
