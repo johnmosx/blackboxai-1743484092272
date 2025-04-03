@@ -155,3 +155,96 @@ export default function Farmers() {
     </div>
   );
 }
+const FarmerFields = ({ farmerId }) => {
+  const [fields, setFields] = useState([]);
+  const [showFieldForm, setShowFieldForm] = useState(false);
+  const [showHistoryForm, setShowHistoryForm] = useState(false);
+  const [selectedField, setSelectedField] = useState(null);
+  const [cropTypes, setCropTypes] = useState([]);
+
+  useEffect(() => {
+    fetchFields();
+    fetchCropTypes();
+  }, [farmerId]);
+
+  const fetchFields = async () => {
+    const data = await getFieldsByFarmer(farmerId);
+    setFields(data);
+  };
+
+  const fetchCropTypes = async () => {
+    const data = await getCropTypes();
+    setCropTypes(data);
+  };
+
+  const handleAddField = async (values) => {
+    await createField(values);
+    setShowFieldForm(false);
+    fetchFields();
+  };
+
+  const handleAddHistory = async (values) => {
+    await addFieldHistory(selectedField.id, values);
+    setShowHistoryForm(false);
+    fetchFields();
+  };
+
+  return (
+    <div>
+      <Button type="primary" onClick={() => setShowFieldForm(true)}>
+        Add Field
+      </Button>
+
+      <Table 
+        dataSource={fields}
+        columns={[
+          { title: 'Name', dataIndex: 'name' },
+          { title: 'Area', dataIndex: 'area' },
+          {
+            title: 'Actions',
+            render: (_, field) => (
+              <Space>
+                <Button onClick={() => {
+                  setSelectedField(field);
+                  setShowHistoryForm(true);
+                }}>
+                  Add History
+                </Button>
+              </Space>
+            )
+          }
+        ]}
+      />
+
+      {/* Field Form Modal */}
+      <Modal
+        title="Add New Field"
+        visible={showFieldForm}
+        onCancel={() => setShowFieldForm(false)}
+        footer={null}
+      >
+        <FieldForm 
+          farmerId={farmerId}
+          cropTypes={cropTypes}
+          onFinish={handleAddField}
+          onCancel={() => setShowFieldForm(false)}
+        />
+      </Modal>
+
+      {/* History Form Modal */}
+      <Modal
+        title="Add Field History"
+        visible={showHistoryForm}
+        onCancel={() => setShowHistoryForm(false)}
+        footer={null}
+      >
+        <FieldHistoryForm
+          field={selectedField}
+          cropTypes={cropTypes}
+          onFinish={handleAddHistory}
+          onCancel={() => setShowHistoryForm(false)}
+        />
+      </Modal>
+    </div>
+  );
+};
