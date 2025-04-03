@@ -18,7 +18,7 @@ export const login = async (credentials) => {
 };
 
 export const changePassword = async (currentPassword, newPassword) => {
-  const response = await fetch(`${API_BASE}/change-password`, {
+  const response = await fetch(`${API_BASE}/users/change-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -121,6 +121,46 @@ export const updateFarmer = async (id, farmerData) => {
 
 export const deleteFarmer = async (id) => {
   const response = await fetch(`${API_BASE}/farmers/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+  return await response.json();
+};
+
+// Crop Type Management
+export const createCropType = async (cropTypeData) => {
+  const response = await fetch(`${API_BASE}/crop-types`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(cropTypeData)
+  });
+  return await response.json();
+};
+
+export const getCropTypes = async () => {
+  const response = await fetch(`${API_BASE}/crop-types`, {
+    headers: getAuthHeaders()
+  });
+  return await response.json();
+};
+
+export const updateCropType = async (id, cropTypeData) => {
+  const response = await fetch(`${API_BASE}/crop-types/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(cropTypeData)
+  });
+  return await response.json();
+};
+
+export const deleteCropType = async (id) => {
+  const response = await fetch(`${API_BASE}/crop-types/${id}`, {
     method: 'DELETE',
     headers: getAuthHeaders()
   });
