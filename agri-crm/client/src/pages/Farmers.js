@@ -36,6 +36,25 @@ export default function Farmers() {
     }
   };
 
+  const [editingFarmer, setEditingFarmer] = useState(null);
+const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+const handleEditClick = (farmer) => {
+  setEditingFarmer(farmer);
+  setIsEditModalVisible(true);
+};
+
+const handleUpdateFarmer = async (values) => {
+  try {
+    await updateFarmer(editingFarmer.id, values);
+    message.success('Farmer updated successfully');
+    setIsEditModalVisible(false);
+    fetchFarmers();
+  } catch (error) {
+    message.error(error.message || 'Failed to update farmer');
+  }
+};
+
   const columns = [
     {
       title: 'Name',
@@ -58,9 +77,9 @@ export default function Farmers() {
       render: (_, farmer) => (
         canEdit && (
           <Space>
-            <Button>Edit</Button>
-            <Button danger>Delete</Button>
-          </Space>
+          <Button onClick={() => handleEditClick(farmer)}>Edit</Button>
+          <Button danger onClick={() => handleDelete(farmer.id)}>Delete</Button>
+        </Space>
         )
       ),
     },
@@ -89,7 +108,7 @@ export default function Farmers() {
 
       <Modal
         title="Create New Farmer"
-        visible={isModalVisible}
+        open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         destroyOnClose
@@ -99,6 +118,19 @@ export default function Farmers() {
           onCancel={() => setIsModalVisible(false)}
         />
       </Modal>
+      <Modal
+      title="Edit Farmer"
+      open={isEditModalVisible}
+      onCancel={() => setIsEditModalVisible(false)}
+      footer={null}
+      destroyOnClose
+    >
+      <FarmerForm 
+        initialValues={editingFarmer}
+        onFinish={handleUpdateFarmer}
+        onCancel={() => setIsEditModalVisible(false)}
+      />
+    </Modal>
     </div>
   );
 }
