@@ -88,23 +88,19 @@ exports.deleteFarmer = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // First delete all fields and their history
-    await Field.destroy({
-      where: { farmerId: id }
-    });
-
+    // First delete all related fields and their history
+    await Field.destroy({ where: { farmerId: id } });
+    
     // Then delete the farmer
-    const deleted = await Farmer.destroy({
-      where: { id }
-    });
-
+    const deleted = await Farmer.destroy({ where: { id } });
+    
     if (!deleted) {
-      return res.status(404).json({ error: 'Farmer not found' });
+      return res.status(404).json({ success: false, message: 'Farmer not found' });
     }
-
-    res.status(204).send();
+    
+    return res.status(200).json({ success: true, message: 'Farmer deleted successfully' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
