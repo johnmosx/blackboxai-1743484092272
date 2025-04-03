@@ -70,17 +70,10 @@ exports.updateFarmer = async (req, res) => {
     const updatedFarmer = await Farmer.findByPk(id, {
       include: [{
         model: Field,
+        as: 'fields', // Add this alias
         include: [{
-          model: Field,
-          as: 'fields',
-          attributes: ['id', 'name', 'area'],
-          include: [{
-            model: FieldHistory,
-            as: 'fieldHistories', // Add this line to match the association alias
-            attributes: ['yieldAmount'],
-            order: [['createdAt', 'DESC']],
-            limit: 1
-          }]
+          model: FieldHistory,
+          as: 'fieldHistories' // Add this alias
         }]
       }]
     });
