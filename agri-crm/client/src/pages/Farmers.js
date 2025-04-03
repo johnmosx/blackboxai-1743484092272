@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Table, Button, Modal, message } from 'antd';
+import { Table, Button, Modal, message, Space } from 'antd';
 import { useAuth } from '../contexts/AuthContext';
 import { getFarmers, createFarmer } from '../api';
 import FarmerForm from '../components/FarmerForm';
@@ -7,8 +7,8 @@ import FarmerForm from '../components/FarmerForm';
 export default function Farmers() {
   const [farmers, setFarmers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { currentUser } = useAuth();
-  currentUser = currentUser.user;
+  const { curretUser } = useAuth();
+  const currentUser = curretUser.user;
   // Check if user is admin or manager
   const canEdit = currentUser?.role === 'Administrator' || currentUser?.role === 'Manager';
 
