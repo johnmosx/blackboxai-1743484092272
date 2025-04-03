@@ -176,3 +176,43 @@ export const deleteCropType = async (id) => {
     return { success: true }; // Handle empty response case
   }
 };
+
+// Phenology Stage API
+export const createPhenologyStage = async (stageData) => {
+  const response = await fetch(`${API_BASE}/phenology-stages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(stageData)
+  });
+  return await response.json();
+};
+
+export const getPhenologyStages = async (cropTypeId) => {
+  const response = await fetch(`${API_BASE}/phenology-stages/crop-type/${cropTypeId}`, {
+    headers: getAuthHeaders()
+  });
+  return await response.json();
+};
+
+export const updatePhenologyStage = async (id, stageData) => {
+  const response = await fetch(`${API_BASE}/phenology-stages/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(stageData)
+  });
+  return await response.json();
+};
+
+export const deletePhenologyStage = async (id) => {
+  const response = await fetch(`${API_BASE}/phenology-stages/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+  return await response.json();
+};
