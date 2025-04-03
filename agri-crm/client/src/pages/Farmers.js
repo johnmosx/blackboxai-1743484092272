@@ -1,34 +1,73 @@
-import React, { useState } from 'react';
-import { Container, Button, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import FarmerTable from '../components/FarmerTable';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { getFarmers, createFarmer, updateFarmer } from '../api';
+import FarmerForm from '../components/FarmerForm';
+import FarmerFields from '../components/FarmerFields';
 
-const Farmers = () => {
-  const [farmers, setFarmers] = useState([
-    { id: 1, name: 'John Doe', location: 'North Field', contact: '555-1234' },
-    { id: 2, name: 'Jane Smith', location: 'South Field', contact: '555-5678' },
-    { id: 3, name: 'Robert Johnson', location: 'East Field', contact: '555-9012' },
-  ]);
+export default function Farmers() {
+  const [farmers, setFarmers] = useState([]);
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
+  const { isManager } = useAuth();
 
-  const handleDelete = (id) => {
-    setFarmers(farmers.filter(farmer => farmer.id !== id));
+  useEffect(() => {
+    fetchFarmers();
+  }, []);
+
+  const fetchFarmers = async () => {
+    const data = await getFarmers();
+    setFarmers(data);
+  };
+
+  const handleSaveFarmer = async (values) => {
+    if (selectedFarmer) {
+      await updateFarmer(selectedFarmer.id, values);
+    } else {
+      await createFarmer(values);
+    }
+    fetchFarmers();
+    setSelectedFarmer(null);
   };
 
   return (
-    <Container>
-      <Row className="mb-4 align-items-center">
-        <Col>
-          <h2>Farmers Management</h2>
-        </Col>
-        <Col className="text-end">
-          <Button as={Link} to="/farmers/new" variant="primary">
+    <div>
+      <h1>Farmers Management</h1>
+      {isManager && (
+        <div>
+          <Button 
+            type="primary" 
+            onClick={() => setSelectedFarmer({})}
+          >
             Add New Farmer
           </Button>
-        </Col>
-      </Row>
-      <FarmerTable farmers={farmers} onDelete={handleDelete} />
-    </Container>
+          {selectedFarmer && (
+            <FarmerForm 
+              farmer={selectedFarmer} 
+              onSave={handleSaveFarmer} 
+            />
+          )}
+          <Table
+            dataSource={farmers}
+            columns={[
+              { title: 'Name', dataIndex: 'name' },
+              { title: 'Phone', dataIndex: 'phone' },
+              { 
+                title: 'Actions',
+                render: (_, farmer) => (
+                  <Space>
+                    <Button onClick={() => setSelectedFarmer(farmer)}>
+                      Edit
+                    </Button>
+                    <Button onClick={() => {/* View fields */}}>
+                      View Fields
+                    </Button>
+                  </Space>
+                )
+              }
+            ]}
+            rowKey="id"
+          />
+        </div>
+      )}
+    </div>
   );
-};
-
-export default Farmers;
+}
