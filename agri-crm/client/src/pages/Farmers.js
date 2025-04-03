@@ -41,25 +41,13 @@ export default function Farmers() {
 
   // Update handleDelete to track loading state
   const handleDelete = async (farmerId) => {
-    Modal.confirm({
-      title: 'Confirm Delete',
-      content: 'Are you sure you want to delete this farmer?',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        setDeletingId(farmerId);
-        try {
-          await deleteFarmer(farmerId);
-          message.success('Farmer deleted successfully');
-          fetchFarmers();
-        } catch (error) {
-          message.error(error.message || 'Failed to delete farmer');
-        } finally {
-          setDeletingId(null);
-        }
-      }
-    });
+    try {
+      await deleteFarmer(farmerId);
+      message.success('Farmer deleted successfully');
+      fetchFarmers();
+    } catch (error) {
+      message.error(error.message || 'Failed to delete farmer');
+    }
   };
 
   const [editingFarmer, setEditingFarmer] = useState(null);
