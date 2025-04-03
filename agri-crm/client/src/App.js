@@ -13,6 +13,7 @@ import Users from './pages/Users';
 import RoleBasedRoute from './components/RoleBasedRoute';
 import Profile from './pages/Profile';
 import AuthenticatedRoute from './components/AuthenticatedRoute';
+import '@ant-design/v5-patch-for-react-19';
 
 function App() {
   return (
