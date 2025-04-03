@@ -1,20 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const farmerController = require('../controllers/farmerController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// Create a new farmer
-router.post('/', farmerController.createFarmer);
+router.use(authMiddleware);
 
-// Get all farmers
+// Manager-only routes
+router.post('/', roleMiddleware('Manager'), farmerController.createFarmer);
+router.put('/:id', roleMiddleware('Manager'), farmerController.updateFarmer);
+router.delete('/:id', roleMiddleware('Manager'), farmerController.deleteFarmer);
+router.post('/:farmerId/fields', roleMiddleware('Manager'), farmerController.addFarmerField);
+
+// Public routes
 router.get('/', farmerController.getFarmers);
-
-// Get a single farmer
-router.get('/:id', farmerController.getFarmer);
-
-// Update a farmer
-router.put('/:id', farmerController.updateFarmer);
-
-// Delete a farmer
-router.delete('/:id', farmerController.deleteFarmer);
+router.get('/:id', farmerController.getFarmerDetails);
 
 module.exports = router;
