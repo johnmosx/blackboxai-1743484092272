@@ -1,3 +1,5 @@
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const CropType = sequelize.define('CropType', {
     name: {
