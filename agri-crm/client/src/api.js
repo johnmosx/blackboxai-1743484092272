@@ -136,6 +136,12 @@ export const deleteFarmer = async (id) => {
     method: 'DELETE',
     headers: getAuthHeaders()
   });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to delete farmer');
+  }
+  
   return await response.json();
 };
 
