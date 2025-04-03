@@ -249,3 +249,32 @@ export const deletePhenologyStage = async (id) => {
   });
   return await response.json();
 };
+
+export const getFieldsByFarmer = async (farmerId) => {
+  const response = await fetch(`${API_BASE}/farmers/${farmerId}/fields`);
+  return await response.json();
+};
+
+export const createField = async (fieldData) => {
+  const response = await fetch(`${API_BASE}/fields`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(fieldData)
+  });
+  return await response.json();
+};
+
+export const addFieldHistory = async (fieldId, historyData) => {
+  const response = await fetch(`${API_BASE}/fields/${fieldId}/history`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify(historyData)
+  });
+  return await response.json();
+};
