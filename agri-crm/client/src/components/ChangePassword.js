@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,12 +7,16 @@ const ChangePassword = () => {
   const [loading, setLoading] = useState(false);
   const { updatePassword } = useAuth();
 
+  const auth = useAuth();
+
+
   const onFinish = async (values) => {
     try {
       setLoading(true);
       await updatePassword(values.currentPassword, values.newPassword);
       message.success('Password updated successfully');
       form.resetFields();
+      auth.globLSignOut();
     } catch (error) {
       message.error('Failed to update password');
     } finally {
