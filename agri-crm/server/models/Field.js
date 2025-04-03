@@ -1,3 +1,6 @@
+'use strict';
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const Field = sequelize.define('Field', {
     name: {
@@ -15,10 +18,13 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Field.associate = (models) => {
-    Field.belongsTo(models.Farmer);
-    Field.hasMany(models.FieldHistory);
-    Field.belongsTo(models.CropType, {
-      as: 'currentCropType'
+    Field.belongsTo(models.Farmer, {
+      foreignKey: 'farmerId',
+      as: 'farmer'
+    });
+    Field.hasMany(models.FieldHistory, {
+      foreignKey: 'fieldId',
+      as: 'fieldHistories'
     });
   };
 
