@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message, Form, Space, Card, Tag } from 'antd';
+import { Table, Button, Modal, message, Form, Space, Card, Tag, Spin } from 'antd';
 import { 
   getCropTypes, 
   createCropType, 
@@ -12,10 +12,14 @@ const Crops = () => {
   const [cropTypes, setCropTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
   const [currentCropType, setCurrentCropType] = useState(null);
   const [form] = Form.useForm();
-  const { user } = useAuth();
+  
+  // Safely get auth context with fallback
+  const authContext = useAuth();
+  const user = authContext?.user || null;
+  const isAdmin = user?.role === 'Administrator';
 
   useEffect(() => {
     fetchCropTypes();
@@ -92,7 +96,7 @@ const Crops = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => user?.role === 'Administrator' ? (
+      render: (_, record) => isAdmin ? (
         <Space>
           <Button 
             type="link" 
@@ -115,12 +119,15 @@ const Crops = () => {
       ) : null,
     },
   ];
+  if (!authContext) {
+    return <Spin size="large" />;
+  }
 
   return (
     <div className="p-4">
       <Card
         title="Crop Type Management"
-        extra={user?.role === 'Administrator' && (
+        extra={isAdmin && (
           <Button 
             type="primary" 
             onClick={() => {
