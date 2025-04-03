@@ -160,9 +160,15 @@ export const updateCropType = async (id, cropTypeData) => {
 };
 
 export const deleteCropType = async (id) => {
-  const response = await fetch(`${API_BASE}/crop-types/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-  return await response.json();
+  try {
+    const response = await fetch(`${API_BASE}/crop-types/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Failed to delete crop type');
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };
