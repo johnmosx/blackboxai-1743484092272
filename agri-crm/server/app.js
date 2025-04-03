@@ -20,7 +20,7 @@ app.use('/api', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/fields', fieldRoutes);
 app.use('/api/crop-types', cropTypeRoutes);
-app.use('/phenology-stages', phenologyStageRoutes);
+app.use('/api/phenology-stages', phenologyStageRoutes);
 
 
 // Database connection
