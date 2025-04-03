@@ -1,3 +1,5 @@
+'use strict';
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const FieldHistory = sequelize.define('FieldHistory', {
     plantingDate: DataTypes.DATE,
