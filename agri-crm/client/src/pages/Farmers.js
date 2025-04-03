@@ -7,7 +7,10 @@ import FarmerForm from '../components/FarmerForm';
 export default function Farmers() {
   const [farmers, setFarmers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { isManager } = useAuth();
+  const { currentUser } = useAuth();
+  currentUser = currentUser.user;
+  // Check if user is admin or manager
+  const canEdit = currentUser?.role === 'Administrator' || currentUser?.role === 'Manager';
 
   useEffect(() => {
     fetchFarmers();
@@ -29,7 +32,7 @@ export default function Farmers() {
       setIsModalVisible(false);
       fetchFarmers();
     } catch (error) {
-      message.error('Failed to create farmer');
+      message.error(error.message || 'Failed to create farmer');
     }
   };
 
@@ -49,13 +52,25 @@ export default function Farmers() {
       dataIndex: 'email',
       key: 'email',
     },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, farmer) => (
+        canEdit && (
+          <Space>
+            <Button>Edit</Button>
+            <Button danger>Delete</Button>
+          </Space>
+        )
+      ),
+    },
   ];
 
   return (
     <div>
       <h1>Farmers Management</h1>
       
-      {isManager && (
+      {canEdit && (
         <Button 
           type="primary" 
           onClick={() => setIsModalVisible(true)}
@@ -77,6 +92,7 @@ export default function Farmers() {
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
+        destroyOnClose
       >
         <FarmerForm 
           onFinish={handleCreateFarmer} 
