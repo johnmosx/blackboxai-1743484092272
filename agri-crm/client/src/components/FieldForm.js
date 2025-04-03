@@ -1,7 +1,9 @@
 import { MapContainer, TileLayer, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import {Form, Select} from "antd";
+import {useState} from "react";
 
-function FieldForm({ field, cropTypes }) {
+export default function FieldForm({ field, cropTypes }) {
   const [geoJson, setGeoJson] = useState(field?.geoJson || null);
   
   return (
