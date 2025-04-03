@@ -51,3 +51,44 @@ exports.getFieldWithHistory = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.updateField = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [updated] = await Field.update(req.body, {
+      where: { id }
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Field not found' });
+    }
+
+    const updatedField = await Field.findByPk(id, {
+      include: [
+        { model: FieldHistory, order: [['createdAt', 'DESC']] },
+        { model: CropType, as: 'currentCropType' }
+      ]
+    });
+
+    res.json(updatedField);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.deleteField = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleted = await Field.destroy({
+      where: { id }
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Field not found' });
+    }
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
