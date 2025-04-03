@@ -116,6 +116,7 @@ exports.getFarmers = async (req, res) => {
         attributes: ['id', 'name', 'area'],
         include: [{
           model: FieldHistory,
+          as: 'fieldHistories', // Add this line to match the association alias
           attributes: ['yieldAmount'],
           order: [['createdAt', 'DESC']],
           limit: 1
