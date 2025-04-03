@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, message, Form, Space } from 'antd';
+import { Table, Button, Modal, message, Form, Space, Card, Tag } from 'antd';
 import { 
   getCropTypes, 
   createCropType, 
@@ -11,6 +11,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Crops = () => {
   const [cropTypes, setCropTypes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentCropType, setCurrentCropType] = useState(null);
   const [form] = Form.useForm();
@@ -24,7 +25,7 @@ const Crops = () => {
     setLoading(true);
     try {
       const data = await getCropTypes();
-      setCropTypes(data);
+      setCropTypes(Array.isArray(data) ? data : []);
     } catch (error) {
       message.error('Failed to fetch crop types');
     } finally {
@@ -33,16 +34,26 @@ const Crops = () => {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteCropType(id);
-      message.success('Crop type deleted successfully');
-      fetchCropTypes();
-    } catch (error) {
-      message.error('Failed to delete crop type');
-    }
+    Modal.confirm({
+      title: 'Delete Crop Type',
+      content: 'Are you sure you want to delete this crop type?',
+      okText: 'Delete',
+      okType: 'danger',
+      cancelText: 'Cancel',
+      onOk: async () => {
+        try {
+          await deleteCropType(id);
+          message.success('Crop type deleted successfully');
+          fetchCropTypes();
+        } catch (error) {
+          message.error('Failed to delete crop type');
+        }
+      }
+    });
   };
 
   const handleSubmit = async (values) => {
+    setFormLoading(true);
     try {
       if (currentCropType) {
         await updateCropType(currentCropType.id, values);
@@ -55,6 +66,8 @@ const Crops = () => {
       fetchCropTypes();
     } catch (error) {
       message.error(error.response?.data?.message || 'Operation failed');
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -63,15 +76,22 @@ const Crops = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      render: (text) => <strong>{text}</strong>
     },
     {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      render: (text) => text || '-'
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: 'Status',
+      key: 'status',
+      render: () => <Tag color="green">Active</Tag>
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
       render: (_, record) => user?.role === 'Administrator' ? (
         <Space>
           <Button 
@@ -97,10 +117,10 @@ const Crops = () => {
   ];
 
   return (
-    <div>
-      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
-        <h1 className="text-2xl font-bold">Crop Type Management</h1>
-        {user?.role === 'Administrator' && (
+    <div className="p-4">
+      <Card
+        title="Crop Type Management"
+        extra={user?.role === 'Administrator' && (
           <Button 
             type="primary" 
             onClick={() => {
@@ -109,41 +129,58 @@ const Crops = () => {
               setVisible(true);
             }}
           >
-            Add Crop Type
+            Add New Crop Type
           </Button>
         )}
-      </div>
-      
-      <Table 
-        columns={columns} 
-        dataSource={cropTypes} 
-        loading={loading}
-        rowKey="id"
-      />
+      >
+        <Table 
+          columns={columns} 
+          dataSource={cropTypes} 
+          loading={loading}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+        />
+      </Card>
 
       <Modal
-        title={currentCropType ? "Edit Crop Type" : "Add New Crop Type"}
+        title={currentCropType ? "Edit Crop Type" : "Create New Crop Type"}
         visible={visible}
         onOk={() => form.submit()}
         onCancel={() => setVisible(false)}
+        confirmLoading={formLoading}
+        width={600}
       >
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
+          initialValues={{
+            name: '',
+            description: ''
+          }}
         >
           <Form.Item
             name="name"
-            label="Name"
-            rules={[{ required: true, message: 'Please input the crop type name!' }]}
+            label="Crop Type Name"
+            rules={[
+              { required: true, message: 'Please input the crop type name' },
+              { max: 50, message: 'Name cannot exceed 50 characters' }
+            ]}
           >
-            <input className="ant-input" />
+            <input className="ant-input" placeholder="Enter crop type name" />
           </Form.Item>
           <Form.Item
             name="description"
             label="Description"
+            rules={[
+              { max: 200, message: 'Description cannot exceed 200 characters' }
+            ]}
           >
-            <textarea className="ant-input" />
+            <textarea 
+              className="ant-input" 
+              placeholder="Enter description (optional)"
+              rows={4} 
+            />
           </Form.Item>
         </Form>
       </Modal>
