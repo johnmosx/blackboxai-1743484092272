@@ -104,6 +104,12 @@ export const createFarmer = async (farmerData) => {
     },
     body: JSON.stringify(farmerData)
   });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create farmer');
+  }
+  
   return await response.json();
 };
 
