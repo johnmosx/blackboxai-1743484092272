@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
   Farmer.associate = (models) => {
     Farmer.hasMany(models.Field, {
       foreignKey: 'farmerId',
-      as: 'fields'
+      as: 'fields',
+      onDelete: 'CASCADE' // Add cascade delete
     });
   };
 
