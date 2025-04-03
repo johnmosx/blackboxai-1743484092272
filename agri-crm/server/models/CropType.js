@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'cropTypeId',
       as: 'fieldHistories'
     });
+    CropType.hasMany(models.PhenologyStage, {
+      foreignKey: 'cropTypeId',
+      as: 'phenologyStages'
+    });
   };
 
   return CropType;
